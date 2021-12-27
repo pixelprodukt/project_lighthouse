@@ -1,0 +1,135 @@
+{
+    "playerCharacters": [
+        {
+            "name": "player",
+            "attributes": {
+                "strength": 10,
+                "dexterity": 12,
+                "constitution": 14
+            },
+            "statistics": {
+                "health": 20,
+                "stamina": 10
+            },
+            "inventory": [
+                {
+                    "label": "money",
+                    "type": "MONEY",
+                    "isUsable": false,
+                    "isEquippable": false,
+                    "isEquipped": false,
+                    "quantity": 200
+                },
+                {
+                    "label": "small healing potion",
+                    "type": "HEALING_POTION_S",
+                    "isUsable": true,
+                    "isEquippable": false,
+                    "isEquipped": false,
+                    "quantity": 2
+                }
+            ]
+        }
+    ],
+    "enemyCharacters": [
+        {
+            "name": "slime",
+            "attributes": {
+                "strength": 12,
+                "dexterity": 8,
+                "constitution": 16
+            },
+            "statistics": {
+                "health": 10,
+                "stamina": 20
+            },
+            "inventory": [
+                {
+                    "label": "money",
+                    "type": "MONEY",
+                    "isUsable": false,
+                    "isEquippable": false,
+                    "isEquipped": false,
+                    "quantity": 14
+                }
+            ]
+        },
+        {
+            "name": "slime",
+            "attributes": {
+                "strength": 12,
+                "dexterity": 8,
+                "constitution": 16
+            },
+            "statistics": {
+                "health": 10,
+                "stamina": 20
+            },
+            "inventory": []
+        }
+    ],
+    "currentTurn": 0,
+    "isPlayerTurn": true,
+    "currentCharacter": "",
+    "currentCharacterActions": [
+        "ATTACK",
+        "USE_ITEM",
+        "USE_ABILITY",
+        "WAIT",
+        "RETREAT"
+    ],
+    "currentCharacterAbilities": [
+        "TAUNT",
+        "TRIP"
+    ]
+}
+
+{
+    "label": "Attack",
+    "data": CharacterAction.ATTACK,
+    "subMenuData": [ /* list of enemies */ ],
+    "isSelected": false,
+    "isDisabled": false
+}
+
+// attack is selected:
+[
+    {
+        "label": "Slime 1",
+        "data": { /* CharacterModel of Slime 1 */ },
+        "subMenuData": null,
+        "isSelected": false,
+        "isDisabled": false
+    },
+    {
+        "label": "Slime 2",
+        "data": { /* CharacterModel of Slime 2 */ },
+        "subMenuData": null,
+        "isSelected": false,
+        "isDisabled": false
+    }
+]
+
+{
+    "label": "Use item",
+    "data": CharacterAction.USE_ITEM,
+    "subMenuData": [ /* list of items of current character */ ],
+    "isSelected": false,
+    "isDisabled": false
+}
+
+// item is selected:
+[
+    {
+        "label": "S. Healing Potion",
+        "data": { /* Item */ },
+        "isSelected": false,
+        "isDisabled": false
+    },
+    {
+        "label": "Money",
+        "data": { /* Item */ },
+        "isSelected": false,
+        "isDisabled": false
+    }
+]

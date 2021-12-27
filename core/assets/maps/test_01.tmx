@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="35">
+ <tileset firstgid="1" source="project_lighthouse_test_tileset.tsx"/>
+ <layer id="1" name="ground" width="16" height="12">
+  <data encoding="csv">
+162,163,12,12,12,12,12,32,31,31,31,32,6,32,31,34,
+162,163,15,15,15,5,2,3,3,25,25,3,6,3,3,33,
+162,163,15,13,2,3,3,3,3,3,3,3,6,3,3,33,
+172,173,5,2,2,3,3,3,3,3,3,3,6,3,3,32,
+12,5,2,3,3,2,3,3,3,3,3,3,6,6,3,3,
+12,19,3,2,3,3,3,3,3,3,3,3,3,6,6,6,
+12,19,2,3,3,3,3,3,3,3,4,4,3,3,3,3,
+12,3,3,3,3,4,3,4,4,4,3,4,4,3,3,34,
+12,2,3,3,4,3,4,151,152,152,152,152,153,4,3,32,
+12,12,2,4,151,152,152,162,162,162,162,162,163,12,12,12,
+12,12,16,4,161,162,162,162,162,162,162,162,162,152,152,152,
+152,152,152,152,162,162,162,162,162,162,162,162,162,162,162,162
+</data>
+ </layer>
+ <objectgroup id="5" name="objects">
+  <object id="21" name="sign" type="game_object" gid="52" x="208" y="64" width="16" height="16"/>
+  <object id="22" name="chest" type="game_object" gid="53" x="96" y="48" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="6" name="warps">
+  <object id="23" name="warp" type="warp" x="256" y="64" width="16" height="48">
+   <properties>
+    <property name="exitId" type="int" value="0"/>
+    <property name="targetMapName" value="test_02"/>
+    <property name="type" value="start"/>
+   </properties>
+  </object>
+  <object id="25" name="warp" type="warp" x="240" y="64" width="16" height="48">
+   <properties>
+    <property name="id" type="int" value="1"/>
+    <property name="type" value="exit"/>
+   </properties>
+  </object>
+  <object id="26" name="warp" type="warp" x="192" y="0" width="16" height="16"/>
+  <object id="27" name="warp" type="warp" x="192" y="-16" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="4" name="collisions">
+  <object id="3" type="collision" x="0" y="0" width="32" height="64"/>
+  <object id="4" type="collision" x="0" y="64" width="16" height="112"/>
+  <object id="5" type="collision" x="16" y="144" width="16" height="32"/>
+  <object id="6" type="collision" x="32" y="160" width="16" height="16"/>
+  <object id="7" type="collision" x="0" y="176" width="256" height="16"/>
+  <object id="8" type="collision" x="64" y="144" width="192" height="32"/>
+  <object id="10" type="collision" x="112" y="128" width="96" height="16"/>
+  <object id="11" type="collision" x="240" y="112" width="16" height="32"/>
+  <object id="13" type="collision" x="240" y="16" width="16" height="48"/>
+  <object id="14" type="collision" x="208" y="0" width="48" height="16"/>
+  <object id="16" type="collision" x="80" y="0" width="112" height="16"/>
+  <object id="17" type="collision" x="32" y="0" width="48" height="32"/>
+  <object id="18" type="collision" x="32" y="32" width="32" height="16"/>
+  <object id="19" type="collision" x="16" y="80" width="16" height="32"/>
+  <object id="20" type="collision" x="144" y="16" width="32" height="16"/>
+ </objectgroup>
+</map>
