@@ -1,15 +1,11 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
-import com.pixelprodukt.lighthouse.battle.model.CharacterModel
 import com.pixelprodukt.lighthouse.interfaces.Renderable
 import com.pixelprodukt.lighthouse.interfaces.Updatable
 import com.pixelprodukt.lighthouse.system.Body
-import com.pixelprodukt.lighthouse.system.AnimationController
-import com.pixelprodukt.lighthouse.system.Direction
 import com.pixelprodukt.lighthouse.system.Transform
 
 open class GameObject : Renderable, Updatable, Comparable<GameObject> {

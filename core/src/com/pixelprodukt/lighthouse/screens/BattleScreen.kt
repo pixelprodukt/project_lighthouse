@@ -4,7 +4,8 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pixelprodukt.lighthouse.battle.enums.CharacterAction
-import com.pixelprodukt.lighthouse.battle.model.*
+import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
+import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
 import com.pixelprodukt.lighthouse.system.GameManager
 import com.pixelprodukt.lighthouse.ui.MenuSelection
 import com.pixelprodukt.lighthouse.ui.UiSelectionMenu
@@ -12,29 +13,28 @@ import com.pixelprodukt.lighthouse.ui.UiSimpleTextBox
 import ktx.app.clearScreen
 import ktx.graphics.use
 
-class BattleScreen(private val context: GameManager) : Screen {
+class BattleScreen(private val game: GameManager) : Screen {
 
-    private val simpleMessageMenu = UiSimpleTextBox(context.assetHandler, 2f, 174f, 252f, 16f)
-    private val characterActionsSelectionMenu = UiSelectionMenu(context.assetHandler, 1, 2f, 2f, 86f, 48f)
-    private val enemyCharacterSelectionMenu = UiSelectionMenu(context.assetHandler, 1, 90f, 90f, 86f, 48f)
+    private val simpleMessageMenu = UiSimpleTextBox(game.assetHandler, 2f, 174f, 252f, 16f)
+    private val characterActionsSelectionMenu = UiSelectionMenu(game.assetHandler, 1, 2f, 2f, 86f, 48f)
+    private val enemyCharacterSelectionMenu = UiSelectionMenu(game.assetHandler, 1, 90f, 90f, 86f, 48f)
     private val playerCharacterSelectionMenu =
-        UiSelectionMenu(context.assetHandler, 1, 2f, 2f, 86f, 90f)
-    private val itemSelectionMenu = UiSelectionMenu(context.assetHandler, 1, 90f, 2f, 128f, 48f)
+        UiSelectionMenu(game.assetHandler, 1, 2f, 2f, 86f, 90f)
+    private val itemSelectionMenu = UiSelectionMenu(game.assetHandler, 1, 90f, 2f, 128f, 48f)
 
     private var selectedPlayerAction: CharacterAction? = null
-    private var currentSelectedPlayerModel: CharacterModel? = null
-    private var currentSelectedEnemyModel: CharacterModel? = null
+    private var player: CombatCharacter? = game.player
+    private var currentSelectedEnemy: CombatCharacter? = null
     private var selectedItem: Item? = null
-    private var selectedTarget: CharacterModel? = null
+    private var selectedTarget: CombatCharacter? = null
 
     private val batch = SpriteBatch()
     private val camera = OrthographicCamera(1024f / 4f, 768f / 4f)
-    private val battleHandler = context.battleHandler
     private lateinit var activeUiSelectionMenu: UiSelectionMenu
 
-    private lateinit var battleModel: BattleModel
-    private val enemyModel1 = CharacterModel("Slime 1", Attributes(12, 8, 8), Statistics(6, 14), mutableListOf())
-    private val enemyModel2 = CharacterModel("Slime 2", Attributes(12, 8, 8), Statistics(6, 14), mutableListOf())
+    private val enemy1 = game.enemy1
+    private val enemy2 = game.enemy2
+
 
     init {
         init()
@@ -42,9 +42,7 @@ class BattleScreen(private val context: GameManager) : Screen {
     }
 
     fun init() {
-        battleModel = battleHandler.startBattle(listOf(context.player.model), listOf(enemyModel1, enemyModel2))
-        currentSelectedPlayerModel = battleHandler.getCurrentCharacterModel(battleModel)
-        characterActionsSelectionMenu.addEntries(createCurrentPlayerMenu(battleModel))
+        characterActionsSelectionMenu.addEntries(createCurrentPlayerMenu())
         activeUiSelectionMenu = characterActionsSelectionMenu
         activeUiSelectionMenu.show()
         itemSelectionMenu.addEntries(createCurrentPlayerItemMenu())
@@ -76,11 +74,11 @@ class BattleScreen(private val context: GameManager) : Screen {
             }
         }
         enemyCharacterSelectionMenu.addSelectionListener { selection ->
-            val enemy = selection.data as CharacterModel
+            val enemy = selection.data as CombatCharacter
             resolveTurn()
         }
         playerCharacterSelectionMenu.addSelectionListener { selection ->
-            val player = selection.data as CharacterModel
+            val player = selection.data as CombatCharacter
             resolveTurn()
         }
     }
@@ -102,15 +100,16 @@ class BattleScreen(private val context: GameManager) : Screen {
         activeUiSelectionMenu = characterActionsSelectionMenu
     }
 
-    private fun createCurrentPlayerMenu(battleModel: BattleModel): List<MenuSelection> {
+    private fun createCurrentPlayerMenu(): List<MenuSelection> {
         val menu: MutableList<MenuSelection> = mutableListOf()
-        battleModel.currentCharacterActions.forEach { action -> menu.add(MenuSelection(action.label, action)) }
+        val actions = listOf(CharacterAction.ATTACK, CharacterAction.USE_ITEM, CharacterAction.WAIT, CharacterAction.RETREAT)
+        actions.forEach { action -> menu.add(MenuSelection(action.label, action)) }
         return menu.toList()
     }
 
     private fun createCurrentPlayerItemMenu(): List<MenuSelection> {
         val menu: MutableList<MenuSelection> = mutableListOf()
-        currentSelectedPlayerModel?.inventory?.forEach { item ->
+        player?.inventory?.items?.forEach { item ->
             if (item.isUsable) menu.add(MenuSelection(item.label, item, isDisabled = item.quantity == 0))
         }
         return menu.toList()
@@ -119,24 +118,24 @@ class BattleScreen(private val context: GameManager) : Screen {
     private fun createEnemySelectionMenu(): List<MenuSelection> {
         // TODO implementation
         return listOf(
-            MenuSelection(enemyModel1.name, enemyModel1),
-            MenuSelection(enemyModel2.name, enemyModel2)
+            MenuSelection(enemy1.name, enemy1),
+            MenuSelection(enemy2.name, enemy2)
         )
     }
 
     private fun handleInput() {
-        if (context.inputHandler.isUpPressed) {
-            context.inputHandler.isUpPressed = false
+        if (game.inputHandler.isUpPressed) {
+            game.inputHandler.isUpPressed = false
             activeUiSelectionMenu.setToEntryInPreviousRow()
         }
-        if (context.inputHandler.isDownPressed) {
-            context.inputHandler.isDownPressed = false
+        if (game.inputHandler.isDownPressed) {
+            game.inputHandler.isDownPressed = false
             activeUiSelectionMenu.setToEntryInNextRow()
         }
 
-        if (context.inputHandler.isSpacePressed || context.inputHandler.isActionPressed) {
-            context.inputHandler.isSpacePressed = false
-            context.inputHandler.isActionPressed = false
+        if (game.inputHandler.isSpacePressed || game.inputHandler.isActionPressed) {
+            game.inputHandler.isSpacePressed = false
+            game.inputHandler.isActionPressed = false
 
             if (simpleMessageMenu.isFocussed) {
                 simpleMessageMenu.nextMessage()
@@ -145,8 +144,8 @@ class BattleScreen(private val context: GameManager) : Screen {
             }
         }
 
-        if (context.inputHandler.isBackPressed) {
-            context.inputHandler.isBackPressed = false
+        if (game.inputHandler.isBackPressed) {
+            game.inputHandler.isBackPressed = false
 
             resetState()
             resetUi()

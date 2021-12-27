@@ -17,7 +17,7 @@ class InputHandler : InputProcessor {
     var isBackPressed: Boolean = false
     var isActionPressed: Boolean = false
     var isInventoryPressed: Boolean = false
-    var isDebug: Boolean = true
+    var isDebug: Boolean = false
 
     override fun keyDown(keycode: Int): Boolean {
 

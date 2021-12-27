@@ -1,4 +1,4 @@
-package com.pixelprodukt.lighthouse.battle.model
+package com.pixelprodukt.lighthouse.gameobjects.characterdata
 
 data class Statistics(
     var health: Int = 0,

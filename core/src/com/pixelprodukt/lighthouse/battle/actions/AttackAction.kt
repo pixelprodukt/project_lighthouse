@@ -1,10 +1,10 @@
 package com.pixelprodukt.lighthouse.battle.actions
 
-import com.pixelprodukt.lighthouse.battle.model.CharacterModel
+import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 
 class AttackAction(
-    private val combatant: CharacterModel,
-    private val targets: List<CharacterModel>
+    private val combatant: CombatCharacter,
+    private val targets: List<CombatCharacter>
     ) : BattleAction() {
     public override fun execute() {
         // TODO: CharacterModels need damage/weapon. For now, fixed value

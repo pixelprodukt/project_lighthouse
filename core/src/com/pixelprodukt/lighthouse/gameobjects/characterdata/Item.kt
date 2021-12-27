@@ -1,4 +1,4 @@
-package com.pixelprodukt.lighthouse.battle.model
+package com.pixelprodukt.lighthouse.gameobjects.characterdata
 
 import com.pixelprodukt.lighthouse.battle.enums.ItemType
 

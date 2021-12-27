@@ -1,15 +1,18 @@
 package com.pixelprodukt.lighthouse.screens
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpStart
 import com.pixelprodukt.lighthouse.system.*
 import ktx.app.clearScreen
 import ktx.graphics.use
+import kotlin.math.sqrt
 
 class GameScreen(private val game: GameManager) : Screen {
 
