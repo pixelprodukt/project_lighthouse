@@ -1,6 +1,7 @@
 package com.pixelprodukt.lighthouse.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -10,6 +11,7 @@ import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpStart
 import com.pixelprodukt.lighthouse.system.*
+import com.pixelprodukt.lighthouse.ui.UiText
 import ktx.app.clearScreen
 import ktx.graphics.use
 import kotlin.math.sqrt
@@ -33,7 +35,7 @@ class GameScreen(private val game: GameManager) : Screen {
         clearScreen(8f / 255f, 24f / 255f, 32f / 255f, 1f)
 
         handleInput()
-        processCollisions(currentMap.gameObjects, currentMap.collisionBodies)
+        processCollisions(currentMap.collisionBodies)
         processWarpCollisions(player, currentMap)
 
         camera.position.x = 256f / 2
@@ -63,6 +65,10 @@ class GameScreen(private val game: GameManager) : Screen {
                 gameObject.update()
                 gameObject.render(batch)
             }
+            val uiText = UiText("Hello World. This is a test for line wrapping. I hope it works.")
+            uiText.x = 40.0f
+            uiText.y = 40.0f
+            uiText.render(batch)
         }
 
         if (game.inputHandler.isDebug) {
@@ -110,20 +116,25 @@ class GameScreen(private val game: GameManager) : Screen {
 
         player.body.velocity.set(0f, 0f)
 
-        if (game.inputHandler.isUpPressed) player.body.velocity.y = 1f
+        /*if (game.inputHandler.isUpPressed) player.body.velocity.y = 1f
         if (game.inputHandler.isDownPressed) player.body.velocity.y = -1f
         if (game.inputHandler.isLeftPressed) player.body.velocity.x = -1f
-        if (game.inputHandler.isRightPressed) player.body.velocity.x = 1f
+        if (game.inputHandler.isRightPressed) player.body.velocity.x = 1f*/
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) player.body.velocity.y = 1f
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) player.body.velocity.y = -1f
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) player.body.velocity.x = -1f
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) player.body.velocity.x = 1f
 
         player.body.velocity.nor()
         player.body.position.x += player.body.velocity.x * player.speed
         player.body.position.y += player.body.velocity.y * player.speed
     }
 
-    private fun processCollisions(collidables: MutableList<GameObject>, staticBodies: MutableList<Body>) {
-        collidables.forEach { collidable ->
-            staticBodies.forEach { body ->
-                resolveCollision(collidable.body, body)
+    private fun processCollisions(bodies: MutableList<Body>) {
+        bodies.forEach { body ->
+            bodies.forEach { other ->
+                if (body != other && !body.isStatic && other.isStatic) resolveCollision(body, other)
             }
         }
     }

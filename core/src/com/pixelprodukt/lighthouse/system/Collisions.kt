@@ -10,7 +10,9 @@ class Body(
     val size: Vector2,
     val velocity: Vector2 = Vector2(0f, 0f),
     val offset: Vector2 = Vector2(0f, 0f),
-    var isActive: Boolean = true
+    var isActive: Boolean = true,
+    var isStatic: Boolean = false,
+    var isSensor: Boolean = false
 ) {
     val center get() = Vector2(position.x + (size.x / 2), position.y + (size.y / 2))
 }

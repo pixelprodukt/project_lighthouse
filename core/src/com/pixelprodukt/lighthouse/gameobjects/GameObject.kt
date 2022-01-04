@@ -10,7 +10,7 @@ import com.pixelprodukt.lighthouse.system.Transform
 
 open class GameObject : Renderable, Updatable, Comparable<GameObject> {
 
-    val body: Body = Body(Vector2(0f, 0f), Vector2(12f, 8f))
+    val body: Body = Body(Vector2(0f, 0f), Vector2(0f, 0f))
     val transform: Transform = Transform()
     protected lateinit var region: TextureRegion
     var isActive = true

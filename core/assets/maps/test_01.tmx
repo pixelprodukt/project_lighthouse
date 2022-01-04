@@ -18,7 +18,11 @@
 </data>
  </layer>
  <objectgroup id="5" name="objects">
-  <object id="21" name="sign" type="game_object" gid="52" x="208" y="64" width="16" height="16"/>
+  <object id="21" name="sign" type="game_object" gid="52" x="208" y="64" width="16" height="16">
+   <properties>
+    <property name="text" value="This is a test sign. Here stands a very important text which gives you a hint where to go."/>
+   </properties>
+  </object>
   <object id="22" name="chest" type="game_object" gid="53" x="96" y="48" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="warps">

@@ -42,8 +42,10 @@ class GameManager {
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     )
         .apply {
-            body.position.set(64f, 64f)
-            body.offset.set(-6f, -8f)
+            body.position.set((48f + (16f / 2)) - (12f / 2), (128f + (16f / 2)) - (8f / 2)) // this is just to center the body in the middle of the tile
+            body.size.set(12f, 8f)
+            body.offset.set(0f, 0f)
+            transform.offset.set(6f, 8f)
         }
 
     val enemy1 = CombatCharacter(

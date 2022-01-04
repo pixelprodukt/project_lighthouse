@@ -12,7 +12,7 @@ open class Character(val name: String, private val animationController: Animatio
             return body.velocity.x != 0f || body.velocity.y != 0f
         }
 
-    var speed = 0.8f
+    var speed = 1.8f
 
     private fun setDirection() {
         if (body.velocity.y > 0f) direction = Direction.UP

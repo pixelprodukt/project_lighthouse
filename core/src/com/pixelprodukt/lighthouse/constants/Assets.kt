@@ -5,6 +5,8 @@ object Assets {
     // Spritesheets
     const val PLAYER = "spritesheets/player/player_spritesheet.png"
     const val GIRL_01 = "spritesheets/npc/girl_01_spritesheet.png"
+    const val SIGN = "spritesheets/sign.png"
+    const val CHEST = "spritesheets/chest.png"
 
     // Fonts
     // const val FONT = "fonts/sneak_attack/sneak_attack.ttf"

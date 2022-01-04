@@ -25,6 +25,7 @@ class AssetHandler {
         load(Assets.DIALOG_ICON, Texture::class.java)
         load(Assets.INTERACTION_ICON, Texture::class.java)
         load(Assets.MENU_SELECTION_ARROW, Texture::class.java)
+        load(Assets.SIGN, Texture::class.java)
 
         val resolver = InternalFileHandleResolver()
         setLoader(FreeTypeFontGenerator::class.java, FreeTypeFontGeneratorLoader(resolver))
