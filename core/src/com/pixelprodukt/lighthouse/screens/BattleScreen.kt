@@ -9,13 +9,13 @@ import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
 import com.pixelprodukt.lighthouse.system.GameManager
 import com.pixelprodukt.lighthouse.ui.MenuSelection
 import com.pixelprodukt.lighthouse.ui.UiSelectionMenu
-import com.pixelprodukt.lighthouse.ui.UiSimpleTextBox
+import com.pixelprodukt.lighthouse.ui.SimpleTextBox
 import ktx.app.clearScreen
 import ktx.graphics.use
 
 class BattleScreen(private val game: GameManager) : Screen {
 
-    private val simpleMessageMenu = UiSimpleTextBox(game.assetHandler, 2f, 174f, 252f, 16f)
+    //private val simpleMessageMenu = SimpleTextBox(game.assetHandler, 2f, 174f, 252f, 16f)
     private val characterActionsSelectionMenu = UiSelectionMenu(game.assetHandler, 1, 2f, 2f, 86f, 48f)
     private val enemyCharacterSelectionMenu = UiSelectionMenu(game.assetHandler, 1, 90f, 90f, 86f, 48f)
     private val playerCharacterSelectionMenu =
@@ -137,11 +137,11 @@ class BattleScreen(private val game: GameManager) : Screen {
             game.inputHandler.isSpacePressed = false
             game.inputHandler.isActionPressed = false
 
-            if (simpleMessageMenu.isFocussed) {
+            /*if (simpleMessageMenu.isFocussed) {
                 simpleMessageMenu.nextMessage()
             } else if (activeUiSelectionMenu.isActive) {
                 activeUiSelectionMenu.select()
-            }
+            }*/
         }
 
         if (game.inputHandler.isBackPressed) {
@@ -165,7 +165,7 @@ class BattleScreen(private val game: GameManager) : Screen {
         handleInput()
 
         batch.use { spriteBatch ->
-            simpleMessageMenu.render(spriteBatch)
+            //simpleMessageMenu.render(spriteBatch)
             characterActionsSelectionMenu.render(spriteBatch)
             itemSelectionMenu.render(spriteBatch)
             playerCharacterSelectionMenu.render(spriteBatch)

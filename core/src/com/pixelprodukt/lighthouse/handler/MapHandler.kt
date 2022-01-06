@@ -8,9 +8,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.pixelprodukt.lighthouse.battle.enums.ItemType
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.gameobjects.Sign
+import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
+import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.map.WarpFactory
@@ -41,6 +44,7 @@ class MapHandler(val player: GameObject) {
             mapName,
             tiledMap,
             gameObjects,
+            initInteractables(gameObjects),
             collisionBodies,
             initWarpStarts(tiledMap),
             initWarpExits(tiledMap)
@@ -51,6 +55,12 @@ class MapHandler(val player: GameObject) {
         return mapsDictionary[mapName] ?: throw Exception("Map not found in dictionary")
     }
 
+    private fun initInteractables(gameObjects: MutableList<GameObject>): MutableList<Interactable> {
+        val interactables: MutableList<Interactable> = mutableListOf()
+        gameObjects.forEach { gameObject -> if (gameObject is Interactable) interactables.add(gameObject) }
+        return interactables
+    }
+
     private fun initGameObjects(map: TiledMap): MutableList<GameObject> {
 
         val gameObjects = mutableListOf<GameObject>()
@@ -58,19 +68,27 @@ class MapHandler(val player: GameObject) {
 
         mapGameObjects?.forEach { gameObject ->
             if (gameObject.name == "sign") {
-                val sign = Sign()
+                val sign = Sign(gameObject.properties["text"] as String)
                 sign.body.position.set(gameObject.x, gameObject.y)
                 sign.body.size.set(16f, 6f)
                 sign.transform.offset.set(Vector2(8f, 8f))
                 sign.body.isStatic = true
+                sign.sensor.size.set(24f, 24f)
+                sign.sensor.position.set((sign.body.position.x + (sign.body.size.x / 2)) - sign.sensor.size.x / 2, (sign.body.position.y + (sign.body.size.y / 2)) - sign.sensor.size.y / 2)
                 gameObjects.add(sign)
             }
             if (gameObject.name == "chest") {
-                val chest = Chest()
+                val items = mutableListOf(
+                    Item("s. Health Potion", ItemType.HEALING_POTION_S, true, false, false, false, false, 2, 8, 12),
+                    Item("l. Health Potion", ItemType.HEALING_POTION_M, true, false, false, false, false, 4, 14, 20)
+                )
+                val chest = Chest(items)
                 chest.body.position.set(gameObject.x, gameObject.y)
                 chest.body.size.set(16f, 10f)
                 chest.transform.offset.set(8f, 8f)
                 chest.body.isStatic = true
+                chest.sensor.size.set(24f, 24f)
+                chest.sensor.position.set((chest.body.position.x + (chest.body.size.x / 2)) - chest.sensor.size.x / 2, (chest.body.position.y + (chest.body.size.y / 2)) - chest.sensor.size.y / 2)
                 gameObjects.add(chest)
             }
         }

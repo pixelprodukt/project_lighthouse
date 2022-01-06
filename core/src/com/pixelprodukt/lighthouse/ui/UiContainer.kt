@@ -2,7 +2,12 @@ package com.pixelprodukt.lighthouse.ui
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class UiContainer : UiView() {
+open class UiContainer(
+    x: Float = 0f,
+    y: Float = 0f,
+    override var width: Float = 0f,
+    override var height: Float = 0f
+) : UiView(x, y) {
 
     private val children: MutableList<UiView> = mutableListOf()
 

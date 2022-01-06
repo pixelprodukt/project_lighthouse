@@ -12,6 +12,7 @@ object Assets {
     // const val FONT = "fonts/sneak_attack/sneak_attack.ttf"
     // const val FONT = "fonts/pixelmix/pixelmix.ttf"
     const val FONT = "fonts/early_gameboy/Early_GameBoy.ttf"
+    // const val FONT = "fonts/rpgsystem/RPGSystem.ttf"
     // const val FONT = "fonts/minecraftia/Minecraftia-Regular.ttf"
 
     // UI

@@ -6,14 +6,16 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 class Body(
-    val position: Vector2,
-    val size: Vector2,
+    val position: Vector2 = Vector2(0f, 0f),
+    val size: Vector2 = Vector2(0f, 0f),
     val velocity: Vector2 = Vector2(0f, 0f),
     val offset: Vector2 = Vector2(0f, 0f),
     var isActive: Boolean = true,
     var isStatic: Boolean = false,
     var isSensor: Boolean = false
 ) {
+    constructor(x: Float, y: Float, width: Float, height: Float) : this(Vector2(x, y), Vector2(width, height))
+
     val center get() = Vector2(position.x + (size.x / 2), position.y + (size.y / 2))
 }
 

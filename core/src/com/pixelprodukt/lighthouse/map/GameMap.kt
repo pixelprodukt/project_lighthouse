@@ -2,12 +2,14 @@ package com.pixelprodukt.lighthouse.map
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
+import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.system.Body
 
 class GameMap(
     val name: String,
     val tiledMap: TiledMap,
     val gameObjects: MutableList<GameObject>,
+    val interactables: MutableList<Interactable>,
     val collisionBodies: MutableList<Body>,
     val warpStarts: List<WarpStart>,
     val warpExits: List<WarpExit>
