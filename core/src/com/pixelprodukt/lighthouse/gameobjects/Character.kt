@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.pixelprodukt.lighthouse.system.AnimationController
 import com.pixelprodukt.lighthouse.system.Direction
 
-open class Character(val name: String, private val animationController: AnimationController) : GameObject() {
+open abstract class Character(val name: String, private val animationController: AnimationController) : GameObject() {
 
-    private var direction: Direction = Direction.DOWN
+    protected var direction: Direction = Direction.DOWN
     private val isMoving: Boolean
         get() {
             return body.velocity.x != 0f || body.velocity.y != 0f

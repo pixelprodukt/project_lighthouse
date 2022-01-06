@@ -9,6 +9,7 @@ import com.pixelprodukt.lighthouse.gameobjects.characterdata.Attributes
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Statistics
 import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
+import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
 import com.pixelprodukt.lighthouse.handler.*
 
@@ -40,13 +41,32 @@ class GameManager {
         inventory,
         "Dougan",
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
-    )
-        .apply {
-            body.position.set((48f + (16f / 2)) - (12f / 2), (128f + (16f / 2)) - (8f / 2)) // this is just to center the body in the middle of the tile
-            body.size.set(12f, 8f)
-            body.offset.set(0f, 0f)
-            transform.offset.set(6f, 8f)
-        }
+    ).apply {
+        body.position.set(40f, 40f)
+        /*body.position.set(
+            (48f + (16f / 2)) - (12f / 2),
+            (128f + (16f / 2)) - (8f / 2)
+        )*/ // this is just to center the body in the middle of the tile
+        body.size.set(12f, 8f)
+        //body.offset.set(0f, 0f)
+        transform.offset.set(6f, 8f)
+    }
+
+    val testNpc = SimpleNpcCharacter(
+        "Nadja",
+        animationFactory.createAnimationController(assetHandler, Assets.GIRL_01),
+        mutableListOf(
+            mutableListOf("Hey there, cutie!", "Would you like to go on a date with me?", "No? Sheesh, are you boring.", "Fucktard!"),
+            mutableListOf("I'm from the battlestar woken.", "I will destroy you! Beep!"),
+            mutableListOf("Have you heard of the nameless fear that dwells far in the east?")
+        )
+    ).apply {
+        body.position.set(10f, 50f) // this is just to center the body in the middle of the tile
+        body.size.set(12f, 8f)
+        transform.offset.set(6f, 8f)
+        sensor.size.set(24f, 24f)
+        //sensor.position.set((body.position.x + (body.size.x / 2)) - sensor.size.x / 2, (body.position.y + (body.size.y / 2)) - sensor.size.y / 2)
+    }
 
     val enemy1 = CombatCharacter(
         Statistics(6, 14),
@@ -63,7 +83,7 @@ class GameManager {
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     )
 
-    val mapHandler = MapHandler(player).apply { initMaps() }
+    val mapHandler = MapHandler(this).apply { initMaps() }
 
     val batch = SpriteBatch()
     val shapeRenderer = ShapeRenderer();

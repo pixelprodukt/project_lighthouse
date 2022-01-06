@@ -19,10 +19,12 @@ import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.map.WarpFactory
 import com.pixelprodukt.lighthouse.map.WarpStart
 import com.pixelprodukt.lighthouse.system.Body
+import com.pixelprodukt.lighthouse.system.GameManager
 
-class MapHandler(val player: GameObject) {
+class MapHandler(private val game: GameManager) {
 
-    private val mapnamesToLoad = listOf<String>("test_01", "test_02", "test_03")
+    val player = game.player
+    private val mapnamesToLoad = listOf<String>("test_01", "test_02", "test_03", "test_04")
     private val mapLoader = TmxMapLoader()
     private val warpFactory = WarpFactory()
     private val mapsDictionary = HashMap<String, GameMap>()
@@ -94,6 +96,7 @@ class MapHandler(val player: GameObject) {
         }
 
         gameObjects.add(player)
+        gameObjects.add(game.testNpc)
         return gameObjects
     }
 

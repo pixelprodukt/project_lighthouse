@@ -11,6 +11,7 @@ import com.pixelprodukt.lighthouse.enums.WorldMapState
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.gameobjects.Sign
+import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
@@ -29,10 +30,10 @@ class WorldMapScreen(private val game: GameManager) : Screen {
     private val shapeRenderer = game.shapeRenderer
     private val camera = game.camera
     private val player = game.player
-    private var currentMap = game.mapHandler.getGameMap("test_01")
+    private var currentMap = game.mapHandler.getGameMap("test_04")
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
-
+    private val interactablesInRange = mutableListOf<Interactable>()
     private val simpleTextBox = SimpleTextBox()
 
     init {
@@ -41,10 +42,17 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         mapRenderer.setView(camera)
         initInteractableListeners(currentMap)
         simpleTextBox.onClose { state = WorldMapState.RUNNING }
+        game.testNpc.setBoundaries(currentMap.tiledMap)
     }
 
     override fun render(delta: Float) {
         clearScreen(8f / 255f, 24f / 255f, 32f / 255f, 1f)
+
+        currentMap.interactables.forEach { interactable ->
+            if (interactable.sensor.isActive && intersect(player.body, interactable.sensor)) {
+                interactablesInRange.add(interactable)
+            }
+        }
 
         handleInput()
         processCollisions(currentMap.collisionBodies)
@@ -73,6 +81,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         if (game.inputHandler.isDebug) debugRendering()
 
         currentMap.gameObjects.sort()
+        interactablesInRange.clear()
     }
 
     override fun show() {}
@@ -107,11 +116,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
             player.body.position.y += player.body.velocity.y * player.speed
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                currentMap.interactables.forEach { interactable ->
-                    if (intersect(player.body, interactable.sensor)) {
-                        interactable.interact()
-                    }
-                }
+                if (interactablesInRange.isNotEmpty()) interactablesInRange.last().interact()
             }
 
         } else if (state == WorldMapState.TEXTBOX_INTERACTION) {
@@ -126,16 +131,21 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         map.interactables.forEach { interactable ->
             if (interactable is Sign) {
                 interactable.addInteractionListener { event ->
-                    console.log("interact with Sign: ${event as String}")
                     state = WorldMapState.TEXTBOX_INTERACTION
                     simpleTextBox.init(mutableListOf(interactable.text))
                 }
             }
             if (interactable is Chest) {
                 interactable.addInteractionListener { event ->
-                    console.log("interact with Chest: ${event as MutableList<Item>}")
                     state = WorldMapState.TEXTBOX_INTERACTION
                     simpleTextBox.init(mutableListOf("This is text from the chest.", "You found 2 Items.", "Whatever!"))
+                    interactable.sensor.isActive = false
+                }
+            }
+            if (interactable is SimpleNpcCharacter) {
+                interactable.addInteractionListener { event ->
+                    state = WorldMapState.TEXTBOX_INTERACTION
+                    simpleTextBox.init(event as MutableList<String>)
                 }
             }
         }
