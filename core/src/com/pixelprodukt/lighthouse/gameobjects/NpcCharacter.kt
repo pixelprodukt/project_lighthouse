@@ -44,20 +44,20 @@ open abstract class NpcCharacter(
             }
 
             if (boundsWidth != null) {
-                if (body.position.x < 0f) body.position.x = 0f
-                if (body.position.x + body.size.x > boundsWidth!!) body.position.x = boundsWidth!! - body.size.x
+                if (body.x < 0f) body.x = 0f
+                if (body.x + body.width > boundsWidth!!) body.x = boundsWidth!! - body.width
             }
             if (boundsHeight != null) {
-                if (body.position.y < 0f) body.position.y = 0f
-                if (body.position.y + body.size.y > boundsHeight!!) body.position.y = boundsHeight!! - body.size.y
+                if (body.y < 0f) body.y = 0f
+                if (body.y + body.height > boundsHeight!!) body.y = boundsHeight!! - body.height
             }
 
-            body.velocity.nor()
-            body.position.x += body.velocity.x * speed
-            body.position.y += body.velocity.y * speed
+            body.velocity.normalized
+            body.x += body.velocity.x * speed
+            body.y += body.velocity.y * speed
         }
-        sensor.position.x = (body.position.x + (body.size.x / 2)) - sensor.size.x / 2
-        sensor.position.y = (body.position.y + (body.size.y / 2)) - sensor.size.y / 2
+        sensor.x = (body.x + (body.width / 2)) - sensor.width / 2
+        sensor.y = (body.y + (body.height / 2)) - sensor.height / 2
         super.update()
     }
 

@@ -12,6 +12,7 @@ import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
 import com.pixelprodukt.lighthouse.handler.*
+import kotlinx.serialization.json.Json
 
 /**
  * Class for holding gamestate as well as services or
@@ -23,6 +24,8 @@ class GameManager {
     val assetHandler = AssetHandler()
     val inputHandler = InputHandler()
     val animationFactory: AnimationFactory = AnimationFactory()
+
+    val json = Json
 
     val inventory = Inventory().apply {
         items.addAll(
@@ -42,12 +45,12 @@ class GameManager {
         "Dougan",
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     ).apply {
-        body.position.set(40f, 40f)
-        /*body.position.set(
+        //body.position.set(40f, 40f)
+        body.xy(
             (48f + (16f / 2)) - (12f / 2),
             (128f + (16f / 2)) - (8f / 2)
-        )*/ // this is just to center the body in the middle of the tile
-        body.size.set(12f, 8f)
+        ) // this is just to center the body in the middle of the tile
+        body.size(12f, 8f)
         //body.offset.set(0f, 0f)
         transform.offset.set(6f, 8f)
     }
@@ -61,10 +64,10 @@ class GameManager {
             mutableListOf("Have you heard of the nameless fear that dwells far in the east?")
         )
     ).apply {
-        body.position.set(10f, 50f) // this is just to center the body in the middle of the tile
-        body.size.set(12f, 8f)
+        body.xy(80f, 80f) // this is just to center the body in the middle of the tile
+        body.size(12f, 8f)
         transform.offset.set(6f, 8f)
-        sensor.size.set(24f, 24f)
+        sensor.size(24f, 24f)
         //sensor.position.set((body.position.x + (body.size.x / 2)) - sensor.size.x / 2, (body.position.y + (body.size.y / 2)) - sensor.size.y / 2)
     }
 

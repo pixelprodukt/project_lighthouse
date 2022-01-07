@@ -11,8 +11,10 @@ class WarpFactory {
             rectangleMapObject.properties["exitId"] as Int,
             rectangleMapObject.properties["targetMapName"].toString(),
             Body(
-                Vector2(rectangleMapObject.rectangle.x, rectangleMapObject.rectangle.y),
-                Vector2(rectangleMapObject.rectangle.width, rectangleMapObject.rectangle.height)
+                rectangleMapObject.rectangle.x,
+                rectangleMapObject.rectangle.y,
+                rectangleMapObject.rectangle.width,
+                rectangleMapObject.rectangle.height
             )
         )
     }
@@ -21,8 +23,10 @@ class WarpFactory {
         return WarpExit(
             rectangleMapObject.properties["id"] as Int,
             Body(
-                Vector2(rectangleMapObject.rectangle.x, rectangleMapObject.rectangle.y),
-                Vector2(rectangleMapObject.rectangle.width, rectangleMapObject.rectangle.height)
+                rectangleMapObject.rectangle.x,
+                rectangleMapObject.rectangle.y,
+                rectangleMapObject.rectangle.width,
+                rectangleMapObject.rectangle.height
             )
         )
     }

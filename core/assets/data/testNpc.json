@@ -1,0 +1,17 @@
+{
+    "name": "Nadja",
+    "spritesheet": "spritesheets/npc/girl_01_spritesheet.png",
+    "messageLists": [
+        ["Hey there, cutie!", "Would you like to go on a date with me?", "No? Sheesh, are you boring.", "Fucktard!"],
+        ["I'm from the battlestar woken.", "I will destroy you! Beep!"],
+        ["Have you heard of the nameless fear that dwells far in the east?"]
+    ],
+    "bodyX": 0,
+    "bodyY": 0,
+    "bodyWidth": 12,
+    "bodyHeight": 8,
+    "transformOffsetX": 6,
+    "transformOffsetY": 8,
+    "sensorWidth": 24,
+    "sensorHeight": 24
+}

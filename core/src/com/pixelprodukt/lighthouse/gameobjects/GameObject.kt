@@ -10,14 +10,14 @@ import com.pixelprodukt.lighthouse.system.Transform
 
 open class GameObject : Renderable, Updatable, Comparable<GameObject> {
 
-    val body: Body = Body(Vector2(0f, 0f), Vector2(0f, 0f))
+    val body: Body = Body()
     val transform: Transform = Transform()
     protected lateinit var region: TextureRegion
     var isActive = true
 
     private fun syncTransformWithBody() {
-        transform.position.x = body.position.x
-        transform.position.y = body.position.y
+        transform.position.x = body.x
+        transform.position.y = body.y
     }
 
     override fun update() {
@@ -50,8 +50,8 @@ open class GameObject : Renderable, Updatable, Comparable<GameObject> {
     }
 
     override fun compareTo(other: GameObject): Int {
-        val tempY = other.body.position.y
-        val compareY = body.position.y
+        val tempY = other.body.y
+        val compareY = body.y
         return if (tempY < compareY) -1 else if (tempY > compareY) 1 else 0
     }
 }

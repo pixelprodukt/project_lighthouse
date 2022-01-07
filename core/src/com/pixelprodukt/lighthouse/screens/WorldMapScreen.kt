@@ -12,14 +12,11 @@ import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.gameobjects.Sign
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpStart
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import ktx.app.clearScreen
 import ktx.graphics.use
 
@@ -30,7 +27,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
     private val shapeRenderer = game.shapeRenderer
     private val camera = game.camera
     private val player = game.player
-    private var currentMap = game.mapHandler.getGameMap("test_04")
+    private var currentMap = game.mapHandler.getGameMap("test_03")
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
     private val interactablesInRange = mutableListOf<Interactable>()
@@ -111,9 +108,9 @@ class WorldMapScreen(private val game: GameManager) : Screen {
             if (Gdx.input.isKeyPressed(Input.Keys.A)) player.body.velocity.x = -1f
             if (Gdx.input.isKeyPressed(Input.Keys.D)) player.body.velocity.x = 1f
 
-            player.body.velocity.nor()
-            player.body.position.x += player.body.velocity.x * player.speed
-            player.body.position.y += player.body.velocity.y * player.speed
+            player.body.velocity.normalized
+            player.body.x += player.body.velocity.x * player.speed
+            player.body.y += player.body.velocity.y * player.speed
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 if (interactablesInRange.isNotEmpty()) interactablesInRange.last().interact()
@@ -175,17 +172,17 @@ class WorldMapScreen(private val game: GameManager) : Screen {
                     ?: throw Exception("No warp exit found!")
 
                 if (warpIsHorizontal(warp, currentMap)) {
-                    player.body.position.set(exit.body.center.x - (player.body.size.x / 2), player.body.position.y)
+                    player.body.xy(exit.body.center.x - (player.body.width / 2), player.body.y)
                 } else {
-                    player.body.position.set(player.body.position.x, exit.body.center.y - (player.body.size.y / 2))
+                    player.body.xy(player.body.x, exit.body.center.y - (player.body.height / 2))
                 }
             }
         }
     }
 
     private fun warpIsHorizontal(warp: WarpStart, map: GameMap): Boolean {
-        return (warp.body.position.x >= map.width || (warp.body.position.x + warp.body.size.x) <= map.width) &&
-                ((warp.body.position.y + warp.body.size.y) <= map.height && warp.body.position.y > 0)
+        return (warp.body.x >= map.width || (warp.body.x + warp.body.width) <= map.width) &&
+                ((warp.body.y + warp.body.height) <= map.height && warp.body.y > 0)
     }
 
     private fun debugRendering() {
@@ -197,19 +194,19 @@ class WorldMapScreen(private val game: GameManager) : Screen {
 
             currentMap.collisionBodies.forEach { body ->
                 renderer.rect(
-                    body.position.x + body.offset.x,
-                    body.position.y + body.offset.y,
-                    body.size.x,
-                    body.size.y
+                    body.x + body.offset.x,
+                    body.y + body.offset.y,
+                    body.width,
+                    body.height
                 )
             }
 
             currentMap.gameObjects.forEach { gameObject ->
                 renderer.rect(
-                    gameObject.body.position.x + gameObject.body.offset.x,
-                    gameObject.body.position.y + gameObject.body.offset.y,
-                    gameObject.body.size.x,
-                    gameObject.body.size.y
+                    gameObject.body.x + gameObject.body.offset.x,
+                    gameObject.body.y + gameObject.body.offset.y,
+                    gameObject.body.width,
+                    gameObject.body.height
                 )
             }
 
@@ -217,10 +214,10 @@ class WorldMapScreen(private val game: GameManager) : Screen {
             currentMap.gameObjects.forEach { gameObject ->
                 if (gameObject is Interactable) {
                     renderer.rect(
-                        gameObject.sensor.position.x + gameObject.sensor.offset.x,
-                        gameObject.sensor.position.y + gameObject.sensor.offset.y,
-                        gameObject.sensor.size.x,
-                        gameObject.sensor.size.y
+                        gameObject.sensor.x + gameObject.sensor.offset.x,
+                        gameObject.sensor.y + gameObject.sensor.offset.y,
+                        gameObject.sensor.width,
+                        gameObject.sensor.height
                     )
                 }
             }
