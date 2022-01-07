@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.pixelprodukt.lighthouse.enums.WorldMapState
@@ -14,7 +15,8 @@ import com.pixelprodukt.lighthouse.gameobjects.Sign
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.map.WarpStart
+import com.pixelprodukt.lighthouse.map.WarpEntry
+import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
 import ktx.app.clearScreen
@@ -23,11 +25,13 @@ import ktx.graphics.use
 class WorldMapScreen(private val game: GameManager) : Screen {
 
     private val console = Console(WorldMapScreen::class.simpleName!!)
-    private val batch = game.batch
-    private val shapeRenderer = game.shapeRenderer
-    private val camera = game.camera
+    private val batch = SpriteBatch()
+    private val camera = OrthographicCamera(1024f / 4f, 768f / 4f)
+    private val uiBatch = SpriteBatch()
+    private val uiCamera = OrthographicCamera(1024f / 4f, 768f / 4f)
+    private val shapeRenderer = ShapeRenderer()
     private val player = game.player
-    private var currentMap = game.mapHandler.getGameMap("test_03")
+    private var currentMap = game.mapHandler.getGameMap("test_04")
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
     private val interactablesInRange = mutableListOf<Interactable>()
@@ -55,8 +59,6 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         processCollisions(currentMap.collisionBodies)
         processWarpCollisions(player, currentMap)
 
-        camera.position.x = 256f / 2
-        camera.position.y = 192f / 2
         camera.update()
         camera.position.set(player.transform.position.x, player.transform.position.y, 0f)
         clampCamera(camera, currentMap)
@@ -64,14 +66,19 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         mapRenderer.setView(camera)
         mapRenderer.render()
 
-        batch.use {
+        batch.use { batch ->
             currentMap.gameObjects.forEach { gameObject ->
                 if (state == WorldMapState.RUNNING) gameObject.update()
                 gameObject.render(batch)
             }
+        }
 
+        uiCamera.update()
+        uiCamera.position.set(256f / 2, 192f / 2, 0f)
+        uiBatch.projectionMatrix = uiCamera.combined
+        uiBatch.use { uiBatch ->
             if (state == WorldMapState.TEXTBOX_INTERACTION) {
-                simpleTextBox.render(batch)
+                simpleTextBox.render(uiBatch)
             }
         }
 
@@ -158,7 +165,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
 
     private fun processWarpCollisions(player: GameObject, gameMap: GameMap) {
 
-        gameMap.warpStarts.forEach { warp ->
+        gameMap.warpExits.forEach { warp ->
 
             if (intersect(player.body, warp.body)) {
 
@@ -168,19 +175,21 @@ class WorldMapScreen(private val game: GameManager) : Screen {
                 initInteractableListeners(currentMap)
                 mapRenderer.map = currentMap.tiledMap
 
-                val exit = currentMap.warpExits.find { exit -> exit.id == warp.exitId }
+                val entry = currentMap.warpEntries.find { exit -> exit.id == warp.targetEntryId }
                     ?: throw Exception("No warp exit found!")
 
-                if (warpIsHorizontal(warp, currentMap)) {
-                    player.body.xy(exit.body.center.x - (player.body.width / 2), player.body.y)
+                player.body.xy(entry.body.center.x - (player.body.width / 2), entry.body.center.y - (player.body.height / 2))
+
+                /*if (warpIsHorizontal(warp, currentMap)) {
+                    player.body.xy(entry.body.center.x - (player.body.width / 2), player.body.y)
                 } else {
-                    player.body.xy(player.body.x, exit.body.center.y - (player.body.height / 2))
-                }
+                    player.body.xy(player.body.x, entry.body.center.y - (player.body.height / 2))
+                }*/
             }
         }
     }
 
-    private fun warpIsHorizontal(warp: WarpStart, map: GameMap): Boolean {
+    private fun warpIsHorizontal(warp: WarpExit, map: GameMap): Boolean {
         return (warp.body.x >= map.width || (warp.body.x + warp.body.width) <= map.width) &&
                 ((warp.body.y + warp.body.height) <= map.height && warp.body.y > 0)
     }

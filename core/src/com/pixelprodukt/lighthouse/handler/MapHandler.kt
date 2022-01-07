@@ -1,13 +1,10 @@
 package com.pixelprodukt.lighthouse.handler
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.maps.MapObject
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
 import com.pixelprodukt.lighthouse.battle.enums.ItemType
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
@@ -17,7 +14,7 @@ import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.map.WarpFactory
-import com.pixelprodukt.lighthouse.map.WarpStart
+import com.pixelprodukt.lighthouse.map.WarpEntry
 import com.pixelprodukt.lighthouse.system.Body
 import com.pixelprodukt.lighthouse.system.GameManager
 
@@ -48,7 +45,7 @@ class MapHandler(private val game: GameManager) {
             gameObjects,
             initInteractables(gameObjects),
             collisionBodies,
-            initWarpStarts(tiledMap),
+            initWarpEntries(tiledMap),
             initWarpExits(tiledMap)
         )
     }
@@ -117,15 +114,15 @@ class MapHandler(private val game: GameManager) {
         return collisionBodies
     }
 
-    private fun initWarpStarts(map: TiledMap): List<WarpStart> {
+    private fun initWarpEntries(map: TiledMap): List<WarpEntry> {
 
         val rectangleList = map.layers.get("warps")?.objects?.getByType(RectangleMapObject::class.java)
             ?: throw Exception("No warps found")
 
         return rectangleList
-            .filter { rectangleMapObject -> rectangleMapObject.properties["type"] == "start" }
+            .filter { rectangleMapObject -> rectangleMapObject.properties["type"] == "entry" }
             .map { rectangleMapObject ->
-                warpFactory.createWarpStart(rectangleMapObject)
+                warpFactory.createWarpEntry(rectangleMapObject)
             }.toList()
     }
 
@@ -135,7 +132,7 @@ class MapHandler(private val game: GameManager) {
             ?: throw Exception("No warps found")
 
         return rectangleList
-            .filter { rectangleMapObject -> rectangleMapObject.properties["type"] == "exit" }
+            .filter { rectangleMapObject -> rectangleMapObject. properties["type"] == "exit" }
             .map { rectangleMapObject ->
                 warpFactory.createWarpExit(rectangleMapObject)
             }.toList()

@@ -45,11 +45,11 @@ class GameManager {
         "Dougan",
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     ).apply {
-        //body.position.set(40f, 40f)
-        body.xy(
+        body.xy(60f, 280f)
+        /*body.xy(
             (48f + (16f / 2)) - (12f / 2),
             (128f + (16f / 2)) - (8f / 2)
-        ) // this is just to center the body in the middle of the tile
+        )*/ // this is just to center the body in the middle of the tile
         body.size(12f, 8f)
         //body.offset.set(0f, 0f)
         transform.offset.set(6f, 8f)
@@ -64,7 +64,7 @@ class GameManager {
             mutableListOf("Have you heard of the nameless fear that dwells far in the east?")
         )
     ).apply {
-        body.xy(80f, 80f) // this is just to center the body in the middle of the tile
+        body.xy(180f, 180f) // this is just to center the body in the middle of the tile
         body.size(12f, 8f)
         transform.offset.set(6f, 8f)
         sensor.size(24f, 24f)
@@ -87,10 +87,6 @@ class GameManager {
     )
 
     val mapHandler = MapHandler(this).apply { initMaps() }
-
-    val batch = SpriteBatch()
-    val shapeRenderer = ShapeRenderer();
-    val camera = OrthographicCamera(1024f / 4f, 768f / 4f) //renderingSystem.camera
 
     /**
      * Game Config Constants

@@ -11,7 +11,7 @@ class GameMap(
     val gameObjects: MutableList<GameObject>,
     val interactables: MutableList<Interactable>,
     val collisionBodies: MutableList<Body>,
-    val warpStarts: List<WarpStart>,
+    val warpEntries: List<WarpEntry>,
     val warpExits: List<WarpExit>
 ) {
     val width: Int = tiledMap.properties["width"] as Int * tiledMap.properties["tilewidth"] as Int
