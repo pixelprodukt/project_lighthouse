@@ -2,8 +2,6 @@ package com.pixelprodukt.lighthouse.ui
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pixelprodukt.lighthouse.interfaces.Renderable
-import com.pixelprodukt.lighthouse.interfaces.Updatable
-import kotlin.math.withSign
 
 open abstract class UiView(
     var x: Float = 0f,
@@ -36,23 +34,45 @@ open abstract class UiView(
 
     protected abstract fun renderImplementation(batch: SpriteBatch)
 
-    fun alignBottomOf(other: UiView, padding: Float = 0f) {
+    fun alignToBottomOf(other: UiView, padding: Float = 0f) {
         y = other.y + padding
     }
 
-    fun alignBottomLeftOf(other: UiView, padding: Float = 0f) {
+    fun alignToBottomLeftOf(other: UiView, padding: Float = 0f) {
         x = other.x + padding
         y = other.y + padding
     }
 
-    fun alignBottomRightOf(other: UiView, padding: Float = 0f) {
+    fun alignToBottomRightOf(other: UiView, padding: Float = 0f) {
         x = (other.x + other.width) - width - padding
         y = other.y + padding
     }
 
-    fun alignTopLeftOf(other: UiView, padding: Float = 0f) {
+    fun alignToTopOf(other: UiView, padding: Float = 0f) {
+        y = other.y + other.height - height - padding
+    }
+
+    fun alignToTopLeftOf(other: UiView, padding: Float = 0f) {
         x = other.x + padding
         y = other.y + other.height - height - padding
+    }
+
+    fun alignToLeftSideOf(other: UiView, padding: Float = 0f) {
+        x = other.x - width - padding
+    }
+
+    fun alignToRightSideOf(other: UiView, padding: Float = 0f) {
+        x = other.x + other.width + padding
+    }
+
+    fun alignToTopRightSideOf(other: UiView, padding: Float = 0f) {
+        x = other.x + other.width + padding
+        y = other.y + other.height - height
+    }
+
+    fun alignToBottomSideOf(other: UiView, padding: Float = 0f) {
+        x = other.x
+        y = other.y - height - padding
     }
 
     fun centerOn(other: UiView) {
@@ -60,7 +80,11 @@ open abstract class UiView(
         y = ((other.y + other.height) / 2) - (height / 2)
     }
 
-    fun centerOnX(other: UiView) {
-        x = (other.width / 2) - (width / 2)
+    fun centerOnXOf(other: UiView) {
+        x = (other.x + other.width / 2) - (width / 2)
+    }
+
+    fun centerOnYOf(other: UiView) {
+        y = (other.y + other.height / 2) - (height / 2)
     }
 }

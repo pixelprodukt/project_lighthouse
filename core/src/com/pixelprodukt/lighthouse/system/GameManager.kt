@@ -1,12 +1,9 @@
 package com.pixelprodukt.lighthouse.system
 
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.pixelprodukt.lighthouse.battle.enums.ItemType
 import com.pixelprodukt.lighthouse.constants.Assets
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Attributes
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
+import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Statistics
 import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
@@ -27,21 +24,10 @@ class GameManager {
 
     val json = Json
 
-    val inventory = Inventory().apply {
-        items.addAll(
-            mutableListOf<Item>(
-                Item("S. Heal. Pot.", ItemType.HEALING_POTION_S, true, false, false, false, false, 3, 4, 8),
-                Item("M. Heal. Pot.", ItemType.HEALING_POTION_M, true, false, false, false, false, 0, 6, 12),
-                Item("S. Bomb", ItemType.BOMB_S, true, false, true, false, false, 5, 8, 14),
-                Item("Money", ItemType.MONEY, false, false, false, false, false, 200, 0, 0)
-            )
-        )
-    }
-
     val player = CombatCharacter(
         Statistics(20, 10),
         Attributes(12, 14, 10),
-        inventory,
+        Inventory(),
         "Dougan",
         animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     ).apply {

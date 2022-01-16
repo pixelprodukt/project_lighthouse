@@ -20,7 +20,6 @@ class UiText(var text: String = "", var fontSize: Int = 8, var color: Color = Co
     override var width: Float = 0f
         get() {
             val layout = GlyphLayout(font, text)
-            Gdx.app.log("UiText", layout.width.toString())
             return layout.width
         }
 

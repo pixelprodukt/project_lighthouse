@@ -23,7 +23,22 @@
     <property name="text" value="This is a test sign. Here stands a very important text which gives you a hint where to go."/>
    </properties>
   </object>
-  <object id="22" name="chest" type="game_object" gid="53" x="96" y="48" width="16" height="16"/>
+  <object id="22" name="chest" type="game_object" gid="53" x="96" y="48" width="16" height="16">
+   <properties>
+    <property name="items">[
+{
+&quot;label&quot;: &quot;sm. Healing Potion&quot;,
+&quot;type&quot;: &quot;HEALING_POTION_S&quot;,
+&quot;quantity&quot;: 3
+},
+{
+&quot;label&quot;: &quot;Money&quot;,
+&quot;type&quot;: &quot;MONEY&quot;,
+&quot;quantity&quot;: 200
+}
+]</property>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="6" name="warps">
   <object id="23" name="warp" type="exit" x="256" y="64" width="16" height="48">

@@ -13,9 +13,10 @@ import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.gameobjects.Sign
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
+import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
+import com.pixelprodukt.lighthouse.handler.MessageHandler
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.map.WarpEntry
 import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
@@ -35,7 +36,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
     private val interactablesInRange = mutableListOf<Interactable>()
-    private val simpleTextBox = SimpleTextBox()
+    private val simpleTextBox = SimpleTextBox(248f, 45f)
 
     init {
         batch.projectionMatrix = camera.combined
@@ -43,7 +44,7 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         mapRenderer.setView(camera)
         initInteractableListeners(currentMap)
         simpleTextBox.onClose { state = WorldMapState.RUNNING }
-        game.testNpc.setBoundaries(currentMap.tiledMap)
+        game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
     }
 
     override fun render(delta: Float) {
@@ -88,15 +89,22 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         interactablesInRange.clear()
     }
 
-    override fun show() {}
+    override fun show() {
+        MessageHandler.addMessageListener { messages ->
+            state = WorldMapState.TEXTBOX_INTERACTION
+            simpleTextBox.init(messages)
+        }
+    }
+
+    override fun hide() {
+        MessageHandler.removeAllListeners()
+    }
 
     override fun resize(width: Int, height: Int) {}
 
     override fun pause() {}
 
     override fun resume() {}
-
-    override fun hide() {}
 
     override fun dispose() {}
 
@@ -105,15 +113,18 @@ class WorldMapScreen(private val game: GameManager) : Screen {
         if (state == WorldMapState.RUNNING) {
             player.body.velocity.set(0f, 0f)
 
-            /*if (game.inputHandler.isUpPressed) player.body.velocity.y = 1f
+            if (game.inputHandler.isUpPressed) player.body.velocity.y = 1f
             if (game.inputHandler.isDownPressed) player.body.velocity.y = -1f
             if (game.inputHandler.isLeftPressed) player.body.velocity.x = -1f
-            if (game.inputHandler.isRightPressed) player.body.velocity.x = 1f*/
+            if (game.inputHandler.isRightPressed) player.body.velocity.x = 1f
 
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) player.body.velocity.y = 1f
-            if (Gdx.input.isKeyPressed(Input.Keys.S)) player.body.velocity.y = -1f
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) player.body.velocity.x = -1f
-            if (Gdx.input.isKeyPressed(Input.Keys.D)) player.body.velocity.x = 1f
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                player.inventory.log()
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+                MessageHandler.publishMessages(mutableListOf("Hello World from WorldMapView!", "This is a message for you all!"))
+            }
 
             player.body.velocity.normalized
             player.body.x += player.body.velocity.x * player.speed
@@ -142,7 +153,13 @@ class WorldMapScreen(private val game: GameManager) : Screen {
             if (interactable is Chest) {
                 interactable.addInteractionListener { event ->
                     state = WorldMapState.TEXTBOX_INTERACTION
-                    simpleTextBox.init(mutableListOf("This is text from the chest.", "You found 2 Items.", "Whatever!"))
+                    val messages: MutableList<String> = mutableListOf()
+                    val items = event as MutableList<Item>
+                    items.forEach { item ->
+                        player.inventory.addItem(item)
+                        messages.add("You found ${item.quantity} ${item.label}")
+                    }
+                    simpleTextBox.init(messages)
                     interactable.sensor.isActive = false
                 }
             }
@@ -164,13 +181,9 @@ class WorldMapScreen(private val game: GameManager) : Screen {
     }
 
     private fun processWarpCollisions(player: GameObject, gameMap: GameMap) {
-
         gameMap.warpExits.forEach { warp ->
-
             if (intersect(player.body, warp.body)) {
-
-                currentMap.interactables.forEach { interactable -> interactable.deleteAllListeners() }
-
+                currentMap.interactables.forEach { interactable -> interactable.removeAllListeners() }
                 currentMap = game.mapHandler.getGameMap(warp.targetMapName)
                 initInteractableListeners(currentMap)
                 mapRenderer.map = currentMap.tiledMap
@@ -179,25 +192,13 @@ class WorldMapScreen(private val game: GameManager) : Screen {
                     ?: throw Exception("No warp exit found!")
 
                 player.body.xy(entry.body.center.x - (player.body.width / 2), entry.body.center.y - (player.body.height / 2))
-
-                /*if (warpIsHorizontal(warp, currentMap)) {
-                    player.body.xy(entry.body.center.x - (player.body.width / 2), player.body.y)
-                } else {
-                    player.body.xy(player.body.x, entry.body.center.y - (player.body.height / 2))
-                }*/
             }
         }
-    }
-
-    private fun warpIsHorizontal(warp: WarpExit, map: GameMap): Boolean {
-        return (warp.body.x >= map.width || (warp.body.x + warp.body.width) <= map.width) &&
-                ((warp.body.y + warp.body.height) <= map.height && warp.body.y > 0)
     }
 
     private fun debugRendering() {
         camera.update()
         shapeRenderer.projectionMatrix = camera.combined
-
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.RED
 
@@ -209,7 +210,6 @@ class WorldMapScreen(private val game: GameManager) : Screen {
                     body.height
                 )
             }
-
             currentMap.gameObjects.forEach { gameObject ->
                 renderer.rect(
                     gameObject.body.x + gameObject.body.offset.x,

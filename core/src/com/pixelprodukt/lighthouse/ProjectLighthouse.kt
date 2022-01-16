@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.pixelprodukt.lighthouse.screens.BattleScreen
+import com.pixelprodukt.lighthouse.screens.CharacterScreen
 import com.pixelprodukt.lighthouse.screens.WorldMapScreen
 import com.pixelprodukt.lighthouse.screens.MainMenuScreen
 import com.pixelprodukt.lighthouse.system.GameManager
@@ -14,12 +15,14 @@ class ProjectLighthouse : Game() {
     private lateinit var worldMapScreen: WorldMapScreen
     private lateinit var mainMenuScreen: MainMenuScreen
     private lateinit var battleScreen: BattleScreen
+    private lateinit var characterScreen: CharacterScreen
 
     override fun create() {
         game = GameManager()
         worldMapScreen = WorldMapScreen(game)
         mainMenuScreen = MainMenuScreen(game)
         battleScreen = BattleScreen(game)
+        characterScreen = CharacterScreen(game)
         Gdx.input.inputProcessor = game.inputHandler
         setScreen(worldMapScreen)
     }
@@ -29,7 +32,7 @@ class ProjectLighthouse : Game() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) setScreen(mainMenuScreen)
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) setScreen(worldMapScreen)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) setScreen(battleScreen)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) setScreen(characterScreen)
     }
 
     /*override fun dispose() {

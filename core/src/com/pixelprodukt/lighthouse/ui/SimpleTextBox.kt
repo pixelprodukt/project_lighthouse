@@ -1,12 +1,6 @@
 package com.pixelprodukt.lighthouse.ui
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.pixelprodukt.lighthouse.constants.Assets
-import com.pixelprodukt.lighthouse.handler.AssetHandler
-
-class SimpleTextBox() : UiContainer(0f, 0f, 256f, 192f) {
+class SimpleTextBox(width: Float = 20f, height: Float = 20f) : UiContainer(0f, 0f, 256f, 192f) {
 
     private val uiNinePatch: UiNinePatch
     private val uiText: UiText
@@ -17,17 +11,18 @@ class SimpleTextBox() : UiContainer(0f, 0f, 256f, 192f) {
     private var index = 0
 
     init {
-        uiNinePatch = UiNinePatch(248f, 45f)
-        uiText = UiText("This is a test. Here follows some longer text to test out the readablity and how the thing...")
+        uiNinePatch = UiNinePatch(width, height)
+        uiText = UiText()
         uiTextBoxMarker = UiTextBoxMarker()
         uiNinePatch.centerOn(this)
-        uiNinePatch.alignBottomOf(this, 4f)
-        uiText.alignTopLeftOf(uiNinePatch, 6f)
+        uiNinePatch.alignToBottomOf(this, 4f)
+        uiText.alignToTopLeftOf(uiNinePatch, 6f)
         uiText.boundariesX = uiNinePatch.width - 12f
-        uiTextBoxMarker.alignBottomRightOf(uiNinePatch, 5f)
+        uiTextBoxMarker.alignToBottomRightOf(uiNinePatch, 5f)
         addChild(uiNinePatch)
         addChild(uiText)
         addChild(uiTextBoxMarker)
+        init(mutableListOf(""))
     }
 
     fun init(messages: MutableList<String>) {

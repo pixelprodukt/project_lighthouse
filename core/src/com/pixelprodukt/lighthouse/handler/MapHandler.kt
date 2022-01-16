@@ -6,10 +6,11 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.battle.enums.ItemType
+import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
 import com.pixelprodukt.lighthouse.gameobjects.Sign
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Item
+import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpExit
@@ -17,6 +18,8 @@ import com.pixelprodukt.lighthouse.map.WarpFactory
 import com.pixelprodukt.lighthouse.map.WarpEntry
 import com.pixelprodukt.lighthouse.system.Body
 import com.pixelprodukt.lighthouse.system.GameManager
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class MapHandler(private val game: GameManager) {
 
@@ -77,10 +80,10 @@ class MapHandler(private val game: GameManager) {
                 gameObjects.add(sign)
             }
             if (gameObject.name == "chest") {
-                val items = mutableListOf(
+                val items = parseItemsFromMapChestObject(gameObject) /*mutableListOf(
                     Item("s. Health Potion", ItemType.HEALING_POTION_S, true, false, false, false, false, 2, 8, 12),
                     Item("l. Health Potion", ItemType.HEALING_POTION_M, true, false, false, false, false, 4, 14, 20)
-                )
+                )*/
                 val chest = Chest(items)
                 chest.body.xy(gameObject.x, gameObject.y)
                 chest.body.size(16f, 10f)
@@ -95,6 +98,14 @@ class MapHandler(private val game: GameManager) {
         gameObjects.add(player)
         gameObjects.add(game.testNpc)
         return gameObjects
+    }
+
+    private fun parseItemsFromMapChestObject(gameObject: TiledMapTileMapObject): MutableList<Item> {
+        val property = gameObject.properties["items"] as String
+        val itemData = Json.decodeFromString<MutableList<MapChestObjectItemData>>(property)
+        val items: MutableList<Item> = mutableListOf()
+        itemData.forEach { data -> items.add(Item(data.label, ItemType.valueOf(data.type), data.quantity)) }
+        return items
     }
 
     private fun initCollisionBodies(map: TiledMap): MutableList<Body> {

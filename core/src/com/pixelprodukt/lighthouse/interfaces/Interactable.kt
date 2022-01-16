@@ -7,5 +7,5 @@ interface Interactable {
     val listeners: MutableList<(Event: Any) -> Unit>
     fun interact()
     fun addInteractionListener(callback: (Event: Any) -> Unit) { listeners.add(callback) }
-    fun deleteAllListeners() { listeners.clear() }
+    fun removeAllListeners() { listeners.clear() }
 }
