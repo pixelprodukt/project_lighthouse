@@ -20,10 +20,11 @@ import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
+import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.graphics.use
 
-class WorldMapScreen(private val game: GameManager) : Screen {
+class WorldMapScreen(private val game: GameManager) : KtxScreen {
 
     private val console = Console(WorldMapScreen::class.simpleName!!)
     private val batch = SpriteBatch()
@@ -94,19 +95,13 @@ class WorldMapScreen(private val game: GameManager) : Screen {
             state = WorldMapState.TEXTBOX_INTERACTION
             simpleTextBox.init(messages)
         }
+
+        Gdx.input.inputProcessor = game.inputHandler
     }
 
     override fun hide() {
         MessageHandler.removeAllListeners()
     }
-
-    override fun resize(width: Int, height: Int) {}
-
-    override fun pause() {}
-
-    override fun resume() {}
-
-    override fun dispose() {}
 
     private fun handleInput() {
 

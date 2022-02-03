@@ -1,0 +1,7 @@
+{
+    "attributeOne": "Hello stuff",
+    "attributeTwo": 123,
+    "attributeThree": {
+        "subAttribute": "hello sub!"
+    }
+}
