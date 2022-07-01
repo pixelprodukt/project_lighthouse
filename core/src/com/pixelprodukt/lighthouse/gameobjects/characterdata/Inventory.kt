@@ -1,6 +1,6 @@
 package com.pixelprodukt.lighthouse.gameobjects.characterdata
 
-import com.pixelprodukt.lighthouse.battle.enums.ItemType
+import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.system.Console
 

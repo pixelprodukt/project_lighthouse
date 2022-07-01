@@ -1,28 +1,31 @@
 package com.pixelprodukt.lighthouse.system
 
-import com.pixelprodukt.lighthouse.battle.enums.ItemType
+import com.badlogic.gdx.Game
+import com.badlogic.gdx.Gdx
+import com.pixelprodukt.lighthouse.ProjectLighthouse
 import com.pixelprodukt.lighthouse.constants.Assets
+import com.pixelprodukt.lighthouse.enums.GameScreen
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Attributes
-import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Statistics
 import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
 import com.pixelprodukt.lighthouse.handler.*
-import kotlinx.serialization.json.Json
+import com.ray3k.stripe.FreeTypeSkin
+import ktx.app.KtxScreen
 
 /**
  * Class for holding gamestate as well as services or
  * "global" variables or in general as glue code
  */
-class GameManager {
+class GameManager(private val game: ProjectLighthouse) {
 
     /*val eventHandler = EventHandler()*/
     val assetHandler = AssetHandler()
     val inputHandler = InputHandler()
     val animationFactory: AnimationFactory = AnimationFactory()
 
-    val json = Json
+    val fontskin = FreeTypeSkin(Gdx.files.internal("skin/lighthouse.json"))
 
     val player = CombatCharacter(
         Statistics(20, 10),
@@ -78,4 +81,12 @@ class GameManager {
      * Game Config Constants
      */
     var masterVolume = 1.0f
+
+    fun setScreen(gameScreenType: GameScreen) {
+        when(gameScreenType) {
+            GameScreen.MAIN -> game.screen = game.mainMenuScreen
+            GameScreen.WORLD -> game.screen = game.worldMapScreen
+            GameScreen.CHARACTER -> game.screen = game.testScreen
+        }
+    }
 }

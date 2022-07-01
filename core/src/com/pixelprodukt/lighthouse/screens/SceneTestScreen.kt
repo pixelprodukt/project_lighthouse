@@ -46,8 +46,6 @@ class SceneTestScreen(private val game: GameManager) : KtxScreen {
     private var attributesContextMenu = createTableWithPresets(84f, 34f, 168f, 154f, false)
 
     init {
-        // Gdx.input.inputProcessor = stage
-
         buttonGrp.add(inventoryBtn).align(Align.left)
         buttonGrp.row()
         buttonGrp.add(statsBtn).align(Align.left)

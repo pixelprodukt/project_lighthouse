@@ -1,4 +1,4 @@
-package com.pixelprodukt.lighthouse.battle.enums
+package com.pixelprodukt.lighthouse.enums
 
 enum class ItemType {
     MONEY,

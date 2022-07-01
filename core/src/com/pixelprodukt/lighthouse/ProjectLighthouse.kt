@@ -8,16 +8,16 @@ import com.badlogic.gdx.utils.Json
 import com.google.gson.Gson
 import com.pixelprodukt.lighthouse.screens.*
 import com.pixelprodukt.lighthouse.system.GameManager
+import com.ray3k.stripe.FreeTypeSkin
 import ktx.json.fromJson
 
 class ProjectLighthouse : Game() {
 
     private lateinit var game: GameManager
-    private lateinit var worldMapScreen: WorldMapScreen
-    private lateinit var mainMenuScreen: MainMenuScreen
-    private lateinit var battleScreen: BattleScreen
-    private lateinit var characterScreen: CharacterScreen
-    private lateinit var testScreen: SceneTestScreen
+
+    lateinit var worldMapScreen: WorldMapScreen
+    lateinit var mainMenuScreen: MainMenuScreen
+    lateinit var testScreen: SceneTestScreen
 
     lateinit var json: Json
     lateinit var gson: Gson
@@ -25,14 +25,12 @@ class ProjectLighthouse : Game() {
     lateinit var data: TestOne
 
     override fun create() {
-        game = GameManager()
+        game = GameManager(this)
         worldMapScreen = WorldMapScreen(game)
         mainMenuScreen = MainMenuScreen(game)
-        battleScreen = BattleScreen(game)
-        characterScreen = CharacterScreen(game)
         testScreen = SceneTestScreen(game)
-        //Gdx.input.inputProcessor = game.inputHandler
-        setScreen(worldMapScreen)
+
+        setScreen(mainMenuScreen)
 
         json = Json()
         gson = Gson()
@@ -47,8 +45,7 @@ class ProjectLighthouse : Game() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) setScreen(mainMenuScreen)
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) setScreen(worldMapScreen)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) setScreen(characterScreen)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) setScreen(testScreen)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) setScreen(testScreen)
     }
 
     /*override fun dispose() {

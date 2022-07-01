@@ -91,6 +91,8 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
     }
 
     override fun show() {
+        super.show()
+
         MessageHandler.addMessageListener { messages ->
             state = WorldMapState.TEXTBOX_INTERACTION
             simpleTextBox.init(messages)

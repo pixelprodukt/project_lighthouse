@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.badlogic.gdx.math.Vector2
-import com.pixelprodukt.lighthouse.battle.enums.ItemType
+import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
