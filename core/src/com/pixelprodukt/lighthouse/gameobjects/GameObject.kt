@@ -5,24 +5,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.interfaces.Renderable
 import com.pixelprodukt.lighthouse.interfaces.Updatable
+import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.Body
+import com.pixelprodukt.lighthouse.system.Direction
 import com.pixelprodukt.lighthouse.system.Transform
 
-open class GameObject : Renderable, Updatable, Comparable<GameObject> {
+open class GameObject() : Renderable, Updatable, Comparable<GameObject> {
 
-    val body: Body = Body()
-    val transform: Transform = Transform()
+    var x = 0
+    var y = 0
     protected lateinit var region: TextureRegion
     var isActive = true
 
-    private fun syncTransformWithBody() {
-        transform.position.x = body.x
-        transform.position.y = body.y
-    }
+    val width get() = region.regionWidth
+    val height get() = region.regionHeight
 
-    override fun update() {
-        syncTransformWithBody()
-    }
+    override fun update(state: UpdateState) {}
 
     override fun render(batch: SpriteBatch) {
 
@@ -30,28 +28,21 @@ open class GameObject : Renderable, Updatable, Comparable<GameObject> {
         val height = region.regionHeight.toFloat()
         val originX: Float = width.div(2)
         val originY: Float = height.div(2)
-        val offsetX = transform.offset.x
-        val offsetY = transform.offset.y
-        val originOffsetX = transform.originOffset.x
-        val originOffsetY = transform.originOffset.y
 
-        batch.draw(
-            region,
-            transform.position.x - originX + offsetX,
-            transform.position.y - originY + offsetY,
-            originX + originOffsetX,
-            originY + originOffsetY,
-            width,
-            height,
-            transform.scale.x,
-            transform.scale.y,
-            transform.rotation
-        )
+        batch.draw(region, x - originX, y - originY, originX, originY, width, height, 1.0f, 1.0f, 0.0f)
     }
 
     override fun compareTo(other: GameObject): Int {
-        val tempY = other.body.y
-        val compareY = body.y
+        val tempY = other.y
+        val compareY = y
         return if (tempY < compareY) -1 else if (tempY > compareY) 1 else 0
     }
 }
+
+enum class BehaviourType {
+    IDLE,
+    WALK
+}
+
+data class UpdateState(val direction: Direction?, val map: GameMap)
+data class Behaviour(val type: BehaviourType, val direction: Direction?)

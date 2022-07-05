@@ -40,7 +40,6 @@ class MapHandler(private val game: GameManager) {
         val tiledMap = mapLoader.load("maps/$mapName.tmx")
         val gameObjects = initGameObjects(tiledMap)
         val collisionBodies = initCollisionBodies(tiledMap)
-        gameObjects.forEach { gameObject -> collisionBodies.add(gameObject.body) }
 
         return GameMap(
             mapName,
@@ -70,33 +69,33 @@ class MapHandler(private val game: GameManager) {
 
         mapGameObjects?.forEach { gameObject ->
             if (gameObject.name == "sign") {
-                val sign = Sign(gameObject.properties["text"] as String)
+                /*val sign = Sign(gameObject.properties["text"] as String)
                 sign.body.xy(gameObject.x, gameObject.y)
                 sign.body.size(16f, 6f)
                 sign.transform.offset.set(Vector2(8f, 8f))
                 sign.body.isStatic = true
                 sign.sensor.size(24f, 24f)
                 sign.sensor.xy((sign.body.x + (sign.body.width / 2)) - sign.sensor.width / 2, (sign.body.y + (sign.body.height / 2)) - sign.sensor.height / 2)
-                gameObjects.add(sign)
+                gameObjects.add(sign)*/
             }
             if (gameObject.name == "chest") {
                 val items = parseItemsFromMapChestObject(gameObject) /*mutableListOf(
                     Item("s. Health Potion", ItemType.HEALING_POTION_S, true, false, false, false, false, 2, 8, 12),
                     Item("l. Health Potion", ItemType.HEALING_POTION_M, true, false, false, false, false, 4, 14, 20)
                 )*/
-                val chest = Chest(items)
+                /*val chest = Chest(items)
                 chest.body.xy(gameObject.x, gameObject.y)
                 chest.body.size(16f, 10f)
                 chest.transform.offset.set(8f, 8f)
                 chest.body.isStatic = true
                 chest.sensor.size(24f, 24f)
                 chest.sensor.xy((chest.body.x + (chest.body.width / 2)) - chest.sensor.width / 2, (chest.body.y + (chest.body.height / 2)) - chest.sensor.height / 2)
-                gameObjects.add(chest)
+                gameObjects.add(chest)*/
             }
         }
 
         gameObjects.add(player)
-        gameObjects.add(game.testNpc)
+        // gameObjects.add(game.testNpc)
         return gameObjects
     }
 

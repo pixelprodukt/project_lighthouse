@@ -1,7 +1,9 @@
 package com.pixelprodukt.lighthouse.handler
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
+import com.pixelprodukt.lighthouse.system.Direction
 
 class InputHandler : InputProcessor {
 
@@ -19,6 +21,25 @@ class InputHandler : InputProcessor {
     var isInventoryPressed: Boolean = false
     var isDebug: Boolean = false
 
+    private val pressedKeysList = mutableListOf<Direction>()
+    val pressedKey: Direction? get() {
+        if (pressedKeysList.isNotEmpty()) {
+            return pressedKeysList[0]
+        }
+        return null
+    }
+
+    private val keymap = hashMapOf(
+        Input.Keys.UP to Direction.UP,
+        Input.Keys.LEFT to Direction.LEFT,
+        Input.Keys.DOWN to Direction.DOWN,
+        Input.Keys.RIGHT to Direction.RIGHT,
+        Input.Keys.W to Direction.UP,
+        Input.Keys.A to Direction.LEFT,
+        Input.Keys.S to Direction.DOWN,
+        Input.Keys.D to Direction.RIGHT
+    )
+
     override fun keyDown(keycode: Int): Boolean {
 
         when (keycode) {
@@ -31,6 +52,12 @@ class InputHandler : InputProcessor {
             Input.Keys.E -> isActionPressed = true
             Input.Keys.TAB -> isInventoryPressed = true
             Input.Keys.BACKSPACE -> isDebug = !isDebug
+        }
+
+        val key = keymap.get(keycode)
+
+        if (key != null && pressedKeysList.indexOf(key) == -1) {
+            pressedKeysList.add(0, key)
         }
         return false
     }
@@ -46,6 +73,13 @@ class InputHandler : InputProcessor {
             Input.Keys.SPACE -> isSpacePressed = false
             Input.Keys.E -> isActionPressed = false
             Input.Keys.TAB -> isInventoryPressed = false
+        }
+
+        val key = keymap.get(keycode)
+        val index = pressedKeysList.indexOf(key)
+
+        if (index > -1) {
+            pressedKeysList.removeAt(index)
         }
         return false
     }

@@ -16,17 +16,17 @@ open abstract class NpcCharacter(
     override val sensor: Body = Body()
     override val listeners: MutableList<(Event: Any) -> Unit> = mutableListOf()
 
-    private var state = 2
+    //private var state = 2
     private var movingTime: Float = 0f
     private var boundsWidth: Float? = null
     private var boundsHeight: Float? = null
 
     init {
-        speed = 0.2f
+        speed = 1
     }
 
-    override fun update() {
-        if (!isStationary) {
+    override fun update(state: UpdateState) {
+        /*if (!isStationary) {
             movingTime -= Gdx.app.graphics.deltaTime
             if (movingTime > 0) {
                 when(state) {
@@ -57,8 +57,8 @@ open abstract class NpcCharacter(
             body.y += body.velocity.y * speed
         }
         sensor.x = (body.x + (body.width / 2)) - sensor.width / 2
-        sensor.y = (body.y + (body.height / 2)) - sensor.height / 2
-        super.update()
+        sensor.y = (body.y + (body.height / 2)) - sensor.height / 2*/
+        super.update(state)
     }
 
     fun setBoundaries(map: TiledMap) {
