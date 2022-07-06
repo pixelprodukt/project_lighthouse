@@ -22,7 +22,7 @@ open abstract class NpcCharacter(
     private var boundsHeight: Float? = null
 
     init {
-        speed = 1
+        speed = 1.0f
     }
 
     override fun update(state: UpdateState) {

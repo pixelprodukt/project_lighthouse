@@ -2,7 +2,6 @@ package com.pixelprodukt.lighthouse.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -15,7 +14,6 @@ import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.handler.MessageHandler
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
 import ktx.app.KtxScreen
@@ -31,7 +29,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
     private val uiCamera = OrthographicCamera(1024f / 4f, 768f / 4f)
     private val shapeRenderer = ShapeRenderer()
     private val player = game.player
-    private var currentMap = game.mapHandler.getGameMap("test_04")
+    private var currentMap = game.mapHandler.getGameMap("test_01")
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
     private val interactablesInRange = mutableListOf<Interactable>()
@@ -58,8 +56,8 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         }
 
         handleInput()
-        processCollisions(currentMap.collisionBodies)
-        processWarpCollisions(player, currentMap)
+        // processCollisions(currentMap.walls)
+        // processWarpCollisions(player, currentMap)
 
         camera.update()
         camera.position.set(player.x.toFloat(), player.y.toFloat(), 0f)
@@ -185,20 +183,20 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.RED
 
-            currentMap.collisionBodies.forEach { body ->
+            currentMap.walls.forEach { wall ->
                 renderer.rect(
-                    body.x + body.offset.x,
-                    body.y + body.offset.y,
-                    body.width,
-                    body.height
+                    wall.x,
+                    wall.y,
+                    wall.width,
+                    wall.height
                 )
             }
             currentMap.gameObjects.forEach { gameObject ->
                 renderer.rect(
-                    gameObject.x.toFloat(),
-                    gameObject.y.toFloat(),
-                    gameObject.width.toFloat(),
-                    gameObject.height.toFloat()
+                    gameObject.x,
+                    gameObject.y,
+                    gameObject.width,
+                    gameObject.height
                 )
             }
 

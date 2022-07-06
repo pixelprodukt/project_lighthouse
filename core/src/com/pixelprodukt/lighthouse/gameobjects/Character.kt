@@ -9,9 +9,9 @@ open class Character(val name: String, private val animationController: Animatio
     private var direction: Direction? = Direction.DOWN
     private val isMoving: Boolean get() = movingProgressRemaining > 0
 
-    var speed = 1
+    var speed = 1.0f
     var isPlayerControlled = false
-    private var movingProgressRemaining = 0
+    private var movingProgressRemaining = 0.0f
 
     private fun changeAnimationControllerState() {
         if (movingProgressRemaining > 0) {
@@ -50,7 +50,7 @@ open class Character(val name: String, private val animationController: Animatio
         }
         movingProgressRemaining -= 1 * speed
 
-        if (movingProgressRemaining == 0) {
+        if (movingProgressRemaining == 0.0f) {
             /*Utils.emitEvent("PersonWalkingComplete", {
                 whoId: this.id
             })*/
@@ -60,11 +60,11 @@ open class Character(val name: String, private val animationController: Animatio
     private fun startBehaviour(state: UpdateState, behaviour: Behaviour) {
         direction = behaviour.direction
         if (behaviour.type == BehaviourType.WALK) {
-            /*if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
-                return;
+            if (state.map.isSpaceTaken(x, y, direction!!)) {
+                return
             }
-            state.map.moveWall(this.x, this.y, this.direction);*/
-            this.movingProgressRemaining = 16
+            //state.map.moveWall(this.x, this.y, this.direction)
+            this.movingProgressRemaining = 16.0f
         }
     }
 

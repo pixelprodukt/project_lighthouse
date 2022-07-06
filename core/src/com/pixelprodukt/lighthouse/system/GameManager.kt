@@ -12,6 +12,7 @@ import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
 import com.pixelprodukt.lighthouse.handler.*
+import com.pixelprodukt.lighthouse.toGrid
 import com.ray3k.stripe.FreeTypeSkin
 import ktx.app.KtxScreen
 
@@ -30,8 +31,8 @@ class GameManager(private val game: ProjectLighthouse) {
 
     val player = Character("Dougan", animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
     ).apply {
-        x = 16
-        y = 16
+        x = toGrid(5)
+        y = toGrid(8)
     }
 
     /*val testNpc = SimpleNpcCharacter(

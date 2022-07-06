@@ -4,12 +4,9 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
-import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
-import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
-import com.pixelprodukt.lighthouse.gameobjects.Sign
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
@@ -39,14 +36,14 @@ class MapHandler(private val game: GameManager) {
 
         val tiledMap = mapLoader.load("maps/$mapName.tmx")
         val gameObjects = initGameObjects(tiledMap)
-        val collisionBodies = initCollisionBodies(tiledMap)
+        val walls = initWalls(tiledMap)
 
         return GameMap(
             mapName,
             tiledMap,
             gameObjects,
             initInteractables(gameObjects),
-            collisionBodies,
+            walls,
             initWarpEntries(tiledMap),
             initWarpExits(tiledMap)
         )
@@ -107,21 +104,22 @@ class MapHandler(private val game: GameManager) {
         return items
     }
 
-    private fun initCollisionBodies(map: TiledMap): MutableList<Body> {
+    private fun initWalls(map: TiledMap): MutableList<GameObject> {
 
-        val collisionBodies = mutableListOf<Body>()
+        val walls = mutableListOf<GameObject>()
 
         val rectangleList = map.layers.get("collisions")?.objects?.getByType(RectangleMapObject::class.java)
             ?: throw Exception("No collision layer found")
 
         rectangleList.forEach { rectangleMapObject ->
-
             val rect = rectangleMapObject.rectangle
-            val body = Body(rect.x, rect.y, rect.width, rect.height)
-            body.isStatic = true
-            collisionBodies.add(body)
+            val body = GameObject().apply {
+                x = rect.x
+                y = rect.y
+            }
+            walls.add(body)
         }
-        return collisionBodies
+        return walls
     }
 
     private fun initWarpEntries(map: TiledMap): List<WarpEntry> {
