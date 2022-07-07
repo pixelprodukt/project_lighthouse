@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
+import com.pixelprodukt.lighthouse.gameobjects.Wall
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
@@ -92,7 +93,7 @@ class MapHandler(private val game: GameManager) {
         }
 
         gameObjects.add(player)
-        // gameObjects.add(game.testNpc)
+        gameObjects.add(game.testNpc)
         return gameObjects
     }
 
@@ -104,20 +105,17 @@ class MapHandler(private val game: GameManager) {
         return items
     }
 
-    private fun initWalls(map: TiledMap): MutableList<GameObject> {
+    private fun initWalls(map: TiledMap): MutableList<Wall> {
 
-        val walls = mutableListOf<GameObject>()
+        val walls = mutableListOf<Wall>()
 
         val rectangleList = map.layers.get("collisions")?.objects?.getByType(RectangleMapObject::class.java)
             ?: throw Exception("No collision layer found")
 
         rectangleList.forEach { rectangleMapObject ->
             val rect = rectangleMapObject.rectangle
-            val body = GameObject().apply {
-                x = rect.x
-                y = rect.y
-            }
-            walls.add(body)
+            val wall = Wall(rect.x, rect.y)
+            walls.add(wall)
         }
         return walls
     }

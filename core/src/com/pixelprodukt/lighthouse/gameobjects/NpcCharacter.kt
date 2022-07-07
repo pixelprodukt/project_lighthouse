@@ -2,16 +2,18 @@ package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.maps.tiled.TiledMap
+import com.pixelprodukt.lighthouse.CharacterConfig
+import com.pixelprodukt.lighthouse.UpdateState
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.system.AnimationController
 import com.pixelprodukt.lighthouse.system.Body
 import kotlin.random.Random
 
 open abstract class NpcCharacter(
-    name: String,
+    config: CharacterConfig,
     animationController: AnimationController,
     private val isStationary: Boolean = false
-) : Character(name, animationController), Interactable {
+) : Character(config, animationController), Interactable {
 
     override val sensor: Body = Body()
     override val listeners: MutableList<(Event: Any) -> Unit> = mutableListOf()
@@ -22,9 +24,8 @@ open abstract class NpcCharacter(
     private var boundsHeight: Float? = null
 
     init {
-        speed = 1.0f
+        speed = 0.5f
     }
-
     override fun update(state: UpdateState) {
         /*if (!isStationary) {
             movingTime -= Gdx.app.graphics.deltaTime

@@ -1,17 +1,21 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.Gdx
+import com.pixelprodukt.lighthouse.Behaviour
+import com.pixelprodukt.lighthouse.BehaviourType
+import com.pixelprodukt.lighthouse.CharacterConfig
+import com.pixelprodukt.lighthouse.UpdateState
+import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.AnimationController
 import com.pixelprodukt.lighthouse.system.Direction
 
-open class Character(val name: String, private val animationController: AnimationController) : GameObject() {
+open class Character(config: CharacterConfig, private val animationController: AnimationController) : GameObject(config) {
 
     private var direction: Direction? = Direction.DOWN
-    private val isMoving: Boolean get() = movingProgressRemaining > 0
+    private var movingProgressRemaining = 0.0f
 
     var speed = 1.0f
-    var isPlayerControlled = false
-    private var movingProgressRemaining = 0.0f
+    val isPlayerControlled = config.isPlayerControlled
 
     private fun changeAnimationControllerState() {
         if (movingProgressRemaining > 0) {
@@ -41,6 +45,13 @@ open class Character(val name: String, private val animationController: Animatio
         )!!
     }
 
+    override fun mount(map: GameMap) {
+        super.mount(map)
+        if (behaviourLoop.size > 0) {
+            playerBehaviourLoop(map)
+        }
+    }
+
     private fun updatePosition() {
         when (direction) {
             Direction.UP -> y += 1 * speed
@@ -49,31 +60,37 @@ open class Character(val name: String, private val animationController: Animatio
             Direction.RIGHT -> x += 1 * speed
         }
         movingProgressRemaining -= 1 * speed
+    }
 
-        if (movingProgressRemaining == 0.0f) {
-            /*Utils.emitEvent("PersonWalkingComplete", {
-                whoId: this.id
-            })*/
+    fun playerBehaviourLoop(map: GameMap) {
+        startBehaviour(UpdateState(null, map = map), behaviourLoop[behaviourLoopIndex])
+        behaviourLoopIndex++
+
+        if (behaviourLoopIndex == behaviourLoop.size) {
+            behaviourLoopIndex = 0
         }
     }
 
-    private fun startBehaviour(state: UpdateState, behaviour: Behaviour) {
+    fun startBehaviour(state: UpdateState, behaviour: Behaviour) {
         direction = behaviour.direction
         if (behaviour.type == BehaviourType.WALK) {
             if (state.map.isSpaceTaken(x, y, direction!!)) {
-                return
+                state.map.moveWall(this.x, this.y, direction!!)
+                this.movingProgressRemaining = 16.0f
             }
-            //state.map.moveWall(this.x, this.y, this.direction)
-            this.movingProgressRemaining = 16.0f
         }
     }
 
     override fun update(state: UpdateState) {
         if (isActive) {
             super.update(state)
-            if (this.movingProgressRemaining > 0) {
+
+            if (movingProgressRemaining > 0) {
                 updatePosition();
             } else {
+                if (behaviourLoop.size > 0 && movingProgressRemaining == 0.0f) {
+                    playerBehaviourLoop(state.map)
+                }
                 if (isPlayerControlled && state.direction != null) {
                     startBehaviour(state, Behaviour(BehaviourType.WALK, state.direction))
                 }

@@ -1,20 +1,16 @@
 package com.pixelprodukt.lighthouse.system
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.pixelprodukt.lighthouse.ProjectLighthouse
 import com.pixelprodukt.lighthouse.constants.Assets
 import com.pixelprodukt.lighthouse.enums.GameScreen
 import com.pixelprodukt.lighthouse.gameobjects.Character
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Attributes
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Statistics
-import com.pixelprodukt.lighthouse.gameobjects.CombatCharacter
 import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
-import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
-import com.pixelprodukt.lighthouse.handler.*
-import com.pixelprodukt.lighthouse.toGrid
+import com.pixelprodukt.lighthouse.getCharacterConfig
+import com.pixelprodukt.lighthouse.handler.AssetHandler
+import com.pixelprodukt.lighthouse.handler.InputHandler
+import com.pixelprodukt.lighthouse.handler.MapHandler
 import com.ray3k.stripe.FreeTypeSkin
-import ktx.app.KtxScreen
 
 /**
  * Class for holding gamestate as well as services or
@@ -22,33 +18,25 @@ import ktx.app.KtxScreen
  */
 class GameManager(private val game: ProjectLighthouse) {
 
-    /*val eventHandler = EventHandler()*/
     val assetHandler = AssetHandler()
     val inputHandler = InputHandler()
     val animationFactory: AnimationFactory = AnimationFactory()
 
     val fontskin = FreeTypeSkin(Gdx.files.internal("skin/lighthouse.json"))
 
-    val player = Character("Dougan", animationFactory.createAnimationController(assetHandler, Assets.PLAYER)
-    ).apply {
-        x = toGrid(5)
-        y = toGrid(8)
-    }
+    private val playerConfig = getCharacterConfig("player.json")
+    val player = Character(playerConfig, animationFactory.createAnimationController(assetHandler, playerConfig.spritesheet))
 
-    /*val testNpc = SimpleNpcCharacter(
-        "Nadja",
+    private val girlConfig = getCharacterConfig("testNpc.json")
+    val testNpc = SimpleNpcCharacter(
+        girlConfig,
         animationFactory.createAnimationController(assetHandler, Assets.GIRL_01),
         mutableListOf(
             mutableListOf("Hey there, cutie!", "Would you like to go on a date with me?", "No? Sheesh, are you boring.", "Fucktard!"),
             mutableListOf("I'm from the battlestar woken.", "I will destroy you! Beep!"),
             mutableListOf("Have you heard of the nameless fear that dwells far in the east?")
         )
-    ).apply {
-        body.xy(180f, 180f)
-        body.size(12f, 8f)
-        transform.offset.set(6f, 8f)
-        sensor.size(24f, 24f)
-    }*/
+    )
 
     val mapHandler = MapHandler(this).apply { initMaps() }
 

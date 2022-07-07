@@ -2,12 +2,14 @@ package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.pixelprodukt.lighthouse.GameObjectConfig
 import com.pixelprodukt.lighthouse.constants.Assets
+import com.pixelprodukt.lighthouse.constants.GameConfig
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.system.Body
 
-class Chest(val loot: MutableList<Item> = mutableListOf()) : GameObject(), Interactable {
+class Chest(config: GameObjectConfig, val loot: MutableList<Item> = mutableListOf()) : GameObject(config), Interactable {
 
     override val sensor: Body = Body()
     override val listeners: MutableList<(Event: Any) -> Unit> = mutableListOf()

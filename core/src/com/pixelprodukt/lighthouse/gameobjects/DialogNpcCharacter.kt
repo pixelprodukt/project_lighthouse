@@ -1,11 +1,12 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
+import com.pixelprodukt.lighthouse.CharacterConfig
 import com.pixelprodukt.lighthouse.system.AnimationController
 
 class DialogNpcCharacter(
-    name: String,
+    config: CharacterConfig,
     animationController: AnimationController
-) : NpcCharacter(name, animationController) {
+) : NpcCharacter(config, animationController) {
 
     override fun interact() {
         // TODO("Not yet implemented")

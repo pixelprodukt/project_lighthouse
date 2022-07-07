@@ -29,6 +29,6 @@ class HealingItem(label: String, type: ItemType, quantity: Int = 0) : Item(label
     override fun use(target: CombatCharacter) {
         val healingValue = Random.nextInt(minValue, maxValue + 1)
         target.statistics.health += healingValue
-        MessageHandler.publishMessages(mutableListOf("${target.name} was healed by $healingValue"))
+        MessageHandler.publishMessages(mutableListOf("df was healed by $healingValue"))
     }
 }

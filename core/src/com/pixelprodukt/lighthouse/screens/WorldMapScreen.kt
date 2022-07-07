@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.pixelprodukt.lighthouse.UpdateState
 import com.pixelprodukt.lighthouse.enums.WorldMapState
 import com.pixelprodukt.lighthouse.gameobjects.*
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
@@ -43,7 +44,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         initInteractableListeners(currentMap)
         simpleTextBox.onClose { state = WorldMapState.RUNNING }
         // game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
-        player.isPlayerControlled = true
+        currentMap.mountObjects()
     }
 
     override fun render(delta: Float) {
@@ -60,7 +61,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         // processWarpCollisions(player, currentMap)
 
         camera.update()
-        camera.position.set(player.x.toFloat(), player.y.toFloat(), 0f)
+        camera.position.set(player.x, player.y, 0f)
         clampCamera(camera, currentMap)
         batch.projectionMatrix = camera.combined;
         mapRenderer.setView(camera)
