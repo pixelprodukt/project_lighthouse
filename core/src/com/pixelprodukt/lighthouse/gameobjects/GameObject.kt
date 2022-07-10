@@ -3,16 +3,12 @@ package com.pixelprodukt.lighthouse.gameobjects
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.*
+import com.pixelprodukt.lighthouse.events.WorldEvent
 import com.pixelprodukt.lighthouse.interfaces.Renderable
 import com.pixelprodukt.lighthouse.interfaces.Updatable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.system.Body
 import com.pixelprodukt.lighthouse.system.Direction
-import com.pixelprodukt.lighthouse.system.Transform
-import kotlinx.coroutines.*
-import ktx.async.KtxAsync
 
 open class GameObject(val config: GameObjectConfig) : Renderable, Updatable, Comparable<GameObject> {
 
@@ -23,44 +19,37 @@ open class GameObject(val config: GameObjectConfig) : Renderable, Updatable, Com
     var y: Float = toGrid(config.y)
     val width = GRIDSIZE
     val height = GRIDSIZE
+    var direction: Direction? = Direction.DOWN
     var isActive = true
     var isMounted = false
     var behaviourLoop: MutableList<Behaviour> = config.behaviourLoop
     var behaviourLoopIndex: Int = 0
 
-    open fun mount(map: GameMap) {
+    fun mount(map: GameMap) {
         isMounted = true
         map.addWall(x, y)
-        //GlobalScope.launch { doBehaviourEvent(map) }
+        doBehaviourEvent(map)
     }
 
     fun doBehaviourEvent(map: GameMap) {
 
-        if (behaviourLoop.size == 0) {
+        if (map.isCutscenePlaying || behaviourLoop.size == 0) {
             return
         }
-        //Gdx.app.log("doBehaviourEvent", id)
-        //Gdx.app.log("doBehaviourEvent", behaviourLoop.toString())
 
-        //KtxAsync.launch { behaviourEvent(map) }
-        //KtxAsync.launch { Gdx.app.log("KtxAsync", "Hello World") }
+        val behaviourForEvent: Behaviour = behaviourLoop[behaviourLoopIndex]
+        behaviourForEvent.characterId = id
 
-        // GlobalScope.launch {  }
-        behaviourLoopIndex++
+        val worldEvent = WorldEvent(map, behaviourForEvent)
+        worldEvent.initialize().invokeOnCompletion {
+            behaviourLoopIndex++
 
-        if (behaviourLoopIndex == behaviourLoop.size) {
-            behaviourLoopIndex = 0
+            if (behaviourLoopIndex == behaviourLoop.size) {
+                behaviourLoopIndex = 0
+            }
+
+            doBehaviourEvent(map)
         }
-        doBehaviourEvent(map)
-
-        behaviourEvent(map)
-
-    }
-
-    fun behaviourEvent(map: GameMap) {
-        val who = (map.gameObjects.find { obj -> obj.id == id }) as Character
-        who.startBehaviour(UpdateState(null, map = map), behaviourLoop[behaviourLoopIndex])
-        //delay(500L)
     }
 
     override fun update(state: UpdateState) {}

@@ -5,8 +5,11 @@
     "spritesheet": "spritesheets/npc/girl_01_spritesheet.png",
     "behaviourLoop": [
         { "type": "WALK", "direction": "LEFT" },
-        { "type": "IDLE", "direction": "UP", "time": 800 },
+        { "type": "WALK", "direction": "LEFT" },
+        { "type": "WALK", "direction": "LEFT" },
         { "type": "WALK", "direction": "UP" },
+        { "type": "WALK", "direction": "RIGHT" },
+        { "type": "WALK", "direction": "RIGHT" },
         { "type": "WALK", "direction": "RIGHT" },
         { "type": "WALK", "direction": "DOWN" }
     ]

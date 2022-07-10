@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.pixelprodukt.lighthouse.Behaviour
+import com.pixelprodukt.lighthouse.BehaviourType
 import com.pixelprodukt.lighthouse.UpdateState
 import com.pixelprodukt.lighthouse.enums.WorldMapState
 import com.pixelprodukt.lighthouse.gameobjects.*
@@ -45,6 +47,16 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         simpleTextBox.onClose { state = WorldMapState.RUNNING }
         // game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
         currentMap.mountObjects()
+
+        currentMap.startCutscene(listOf(
+            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.LEFT, characterId = "NADJA"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
+        ))
     }
 
     override fun render(delta: Float) {
