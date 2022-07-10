@@ -4,12 +4,10 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
-import com.badlogic.gdx.math.Vector2
 import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
-import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
-import com.pixelprodukt.lighthouse.gameobjects.Sign
+import com.pixelprodukt.lighthouse.gameobjects.Wall
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
@@ -39,15 +37,14 @@ class MapHandler(private val game: GameManager) {
 
         val tiledMap = mapLoader.load("maps/$mapName.tmx")
         val gameObjects = initGameObjects(tiledMap)
-        val collisionBodies = initCollisionBodies(tiledMap)
-        gameObjects.forEach { gameObject -> collisionBodies.add(gameObject.body) }
+        val walls = initWalls(tiledMap)
 
         return GameMap(
             mapName,
             tiledMap,
             gameObjects,
             initInteractables(gameObjects),
-            collisionBodies,
+            walls,
             initWarpEntries(tiledMap),
             initWarpExits(tiledMap)
         )
@@ -70,28 +67,28 @@ class MapHandler(private val game: GameManager) {
 
         mapGameObjects?.forEach { gameObject ->
             if (gameObject.name == "sign") {
-                val sign = Sign(gameObject.properties["text"] as String)
+                /*val sign = Sign(gameObject.properties["text"] as String)
                 sign.body.xy(gameObject.x, gameObject.y)
                 sign.body.size(16f, 6f)
                 sign.transform.offset.set(Vector2(8f, 8f))
                 sign.body.isStatic = true
                 sign.sensor.size(24f, 24f)
                 sign.sensor.xy((sign.body.x + (sign.body.width / 2)) - sign.sensor.width / 2, (sign.body.y + (sign.body.height / 2)) - sign.sensor.height / 2)
-                gameObjects.add(sign)
+                gameObjects.add(sign)*/
             }
             if (gameObject.name == "chest") {
                 val items = parseItemsFromMapChestObject(gameObject) /*mutableListOf(
                     Item("s. Health Potion", ItemType.HEALING_POTION_S, true, false, false, false, false, 2, 8, 12),
                     Item("l. Health Potion", ItemType.HEALING_POTION_M, true, false, false, false, false, 4, 14, 20)
                 )*/
-                val chest = Chest(items)
+                /*val chest = Chest(items)
                 chest.body.xy(gameObject.x, gameObject.y)
                 chest.body.size(16f, 10f)
                 chest.transform.offset.set(8f, 8f)
                 chest.body.isStatic = true
                 chest.sensor.size(24f, 24f)
                 chest.sensor.xy((chest.body.x + (chest.body.width / 2)) - chest.sensor.width / 2, (chest.body.y + (chest.body.height / 2)) - chest.sensor.height / 2)
-                gameObjects.add(chest)
+                gameObjects.add(chest)*/
             }
         }
 
@@ -108,21 +105,19 @@ class MapHandler(private val game: GameManager) {
         return items
     }
 
-    private fun initCollisionBodies(map: TiledMap): MutableList<Body> {
+    private fun initWalls(map: TiledMap): MutableList<Wall> {
 
-        val collisionBodies = mutableListOf<Body>()
+        val walls = mutableListOf<Wall>()
 
         val rectangleList = map.layers.get("collisions")?.objects?.getByType(RectangleMapObject::class.java)
             ?: throw Exception("No collision layer found")
 
         rectangleList.forEach { rectangleMapObject ->
-
             val rect = rectangleMapObject.rectangle
-            val body = Body(rect.x, rect.y, rect.width, rect.height)
-            body.isStatic = true
-            collisionBodies.add(body)
+            val wall = Wall(rect.x, rect.y)
+            walls.add(wall)
         }
-        return collisionBodies
+        return walls
     }
 
     private fun initWarpEntries(map: TiledMap): List<WarpEntry> {

@@ -1,0 +1,8 @@
+{
+    "id": "PLAYER",
+    "x": 5,
+    "y": 8,
+    "spritesheet": "spritesheets/player/player_spritesheet.png",
+    "isPlayerControlled": true,
+    "behaviourLoop": []
+}

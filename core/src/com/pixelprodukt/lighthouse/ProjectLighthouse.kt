@@ -6,10 +6,11 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Json
 import com.google.gson.Gson
-import com.pixelprodukt.lighthouse.screens.*
+import com.pixelprodukt.lighthouse.screens.MainMenuScreen
+import com.pixelprodukt.lighthouse.screens.SceneTestScreen
+import com.pixelprodukt.lighthouse.screens.WorldMapScreen
 import com.pixelprodukt.lighthouse.system.GameManager
-import com.ray3k.stripe.FreeTypeSkin
-import ktx.json.fromJson
+import ktx.async.KtxAsync
 
 class ProjectLighthouse : Game() {
 
@@ -25,6 +26,7 @@ class ProjectLighthouse : Game() {
     lateinit var data: TestOne
 
     override fun create() {
+        KtxAsync.initiate()
         game = GameManager(this)
         worldMapScreen = WorldMapScreen(game)
         mainMenuScreen = MainMenuScreen(game)

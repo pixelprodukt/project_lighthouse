@@ -2,22 +2,21 @@ package com.pixelprodukt.lighthouse.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.pixelprodukt.lighthouse.Behaviour
+import com.pixelprodukt.lighthouse.BehaviourType
+import com.pixelprodukt.lighthouse.UpdateState
 import com.pixelprodukt.lighthouse.enums.WorldMapState
-import com.pixelprodukt.lighthouse.gameobjects.Chest
-import com.pixelprodukt.lighthouse.gameobjects.GameObject
-import com.pixelprodukt.lighthouse.gameobjects.Sign
-import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
+import com.pixelprodukt.lighthouse.gameobjects.*
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.handler.MessageHandler
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.system.*
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
 import ktx.app.KtxScreen
@@ -33,11 +32,12 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
     private val uiCamera = OrthographicCamera(1024f / 4f, 768f / 4f)
     private val shapeRenderer = ShapeRenderer()
     private val player = game.player
-    private var currentMap = game.mapHandler.getGameMap("test_04")
+    private var currentMap = game.mapHandler.getGameMap("test_01")
     private val mapRenderer = OrthogonalTiledMapRenderer(currentMap.tiledMap)
     private var state: WorldMapState = WorldMapState.RUNNING
     private val interactablesInRange = mutableListOf<Interactable>()
     private val simpleTextBox = SimpleTextBox(248f, 45f)
+    private val inputListener = InputListener()
 
     init {
         batch.projectionMatrix = camera.combined
@@ -45,24 +45,35 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         mapRenderer.setView(camera)
         initInteractableListeners(currentMap)
         simpleTextBox.onClose { state = WorldMapState.RUNNING }
-        game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
+        // game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
+        currentMap.mountObjects()
+
+        currentMap.startCutscene(listOf(
+            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
+            Behaviour(BehaviourType.WALK, Direction.LEFT, characterId = "NADJA"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
+            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
+        ))
     }
 
     override fun render(delta: Float) {
         clearScreen(8f / 255f, 24f / 255f, 32f / 255f, 1f)
 
         currentMap.interactables.forEach { interactable ->
-            if (interactable.sensor.isActive && intersect(player.body, interactable.sensor)) {
+            /*if (interactable.sensor.isActive && intersect(player.body, interactable.sensor)) {
                 interactablesInRange.add(interactable)
-            }
+            }*/
         }
 
         handleInput()
-        processCollisions(currentMap.collisionBodies)
-        processWarpCollisions(player, currentMap)
+        // processCollisions(currentMap.walls)
+        // processWarpCollisions(player, currentMap)
 
         camera.update()
-        camera.position.set(player.transform.position.x, player.transform.position.y, 0f)
+        camera.position.set(player.x, player.y, 0f)
         clampCamera(camera, currentMap)
         batch.projectionMatrix = camera.combined;
         mapRenderer.setView(camera)
@@ -70,7 +81,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
 
         batch.use { batch ->
             currentMap.gameObjects.forEach { gameObject ->
-                if (state == WorldMapState.RUNNING) gameObject.update()
+                if (state == WorldMapState.RUNNING) gameObject.update(UpdateState(game.inputHandler.pressedKey, currentMap))
                 gameObject.render(batch)
             }
         }
@@ -108,24 +119,10 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
     private fun handleInput() {
 
         if (state == WorldMapState.RUNNING) {
-            player.body.velocity.set(0f, 0f)
-
-            if (game.inputHandler.isUpPressed) player.body.velocity.y = 1f
-            if (game.inputHandler.isDownPressed) player.body.velocity.y = -1f
-            if (game.inputHandler.isLeftPressed) player.body.velocity.x = -1f
-            if (game.inputHandler.isRightPressed) player.body.velocity.x = 1f
-
-            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-                player.inventory.log()
-            }
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
                 MessageHandler.publishMessages(mutableListOf("Hello World from WorldMapView!", "This is a message for you all!"))
             }
-
-            player.body.velocity.normalized
-            player.body.x += player.body.velocity.x * player.speed
-            player.body.y += player.body.velocity.y * player.speed
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 if (interactablesInRange.isNotEmpty()) interactablesInRange.last().interact()
@@ -153,7 +150,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
                     val messages: MutableList<String> = mutableListOf()
                     val items = event as MutableList<Item>
                     items.forEach { item ->
-                        player.inventory.addItem(item)
+                        //player.inventory.addItem(item)
                         messages.add("You found ${item.quantity} ${item.label}")
                     }
                     simpleTextBox.init(messages)
@@ -179,7 +176,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
 
     private fun processWarpCollisions(player: GameObject, gameMap: GameMap) {
         gameMap.warpExits.forEach { warp ->
-            if (intersect(player.body, warp.body)) {
+            /*if (intersect(player.body, warp.body)) {
                 currentMap.interactables.forEach { interactable -> interactable.removeAllListeners() }
                 currentMap = game.mapHandler.getGameMap(warp.targetMapName)
                 initInteractableListeners(currentMap)
@@ -189,7 +186,7 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
                     ?: throw Exception("No warp exit found!")
 
                 player.body.xy(entry.body.center.x - (player.body.width / 2), entry.body.center.y - (player.body.height / 2))
-            }
+            }*/
         }
     }
 
@@ -199,20 +196,20 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.RED
 
-            currentMap.collisionBodies.forEach { body ->
+            currentMap.walls.forEach { wall ->
                 renderer.rect(
-                    body.x + body.offset.x,
-                    body.y + body.offset.y,
-                    body.width,
-                    body.height
+                    wall.x,
+                    wall.y,
+                    wall.width,
+                    wall.height
                 )
             }
             currentMap.gameObjects.forEach { gameObject ->
                 renderer.rect(
-                    gameObject.body.x + gameObject.body.offset.x,
-                    gameObject.body.y + gameObject.body.offset.y,
-                    gameObject.body.width,
-                    gameObject.body.height
+                    gameObject.x,
+                    gameObject.y,
+                    gameObject.width,
+                    gameObject.height
                 )
             }
 
