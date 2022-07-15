@@ -20,11 +20,6 @@ class ProjectLighthouse : Game() {
     lateinit var mainMenuScreen: MainMenuScreen
     lateinit var testScreen: SceneTestScreen
 
-    lateinit var json: Json
-    lateinit var gson: Gson
-    lateinit var file: FileHandle
-    lateinit var data: TestOne
-
     override fun create() {
         KtxAsync.initiate()
         game = GameManager(this)
@@ -33,13 +28,6 @@ class ProjectLighthouse : Game() {
         testScreen = SceneTestScreen(game)
 
         setScreen(mainMenuScreen)
-
-        json = Json()
-        gson = Gson()
-        file = Gdx.files.internal("data/test.json")
-        data = gson.fromJson(file.readString(), TestOne::class.java)
-        // Gdx.app.log("json", "${data.attributeOne}, ${data.attributeTwo}, ${data.attributeThree!!.subAttribute}")
-        Gdx.app.log("json", "${data}")
     }
 
     override fun render() {
@@ -54,15 +42,3 @@ class ProjectLighthouse : Game() {
         gameScreen.dispose()
     }*/
 }
-
-data class TestOne(var attributeOne: String, var attributeTwo: Int, var attributeThree: TestTwo)
-data class TestTwo(var subAttribute: String)
-/*
-class TestOne {
-    var attributeOne: String? = null
-    var attributeTwo: Int? = null
-    var attributeThree: TestTwo? = null
-}
-class TestTwo {
-    var subAttribute: String? = null
-}*/

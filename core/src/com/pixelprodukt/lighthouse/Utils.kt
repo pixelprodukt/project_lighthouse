@@ -2,6 +2,7 @@ package com.pixelprodukt.lighthouse
 
 import com.badlogic.gdx.Gdx
 import com.google.gson.Gson
+import com.pixelprodukt.lighthouse.gameobjects.Character
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.Direction
 import com.pixelprodukt.lighthouse.system.Vector2
@@ -39,7 +40,9 @@ enum class BehaviourType {
 }
 
 data class UpdateState(val direction: Direction?, val map: GameMap)
-data class Behaviour(val type: BehaviourType, val direction: Direction?, val time: Long = 0L, var characterId: String? = null, val retry: Boolean = false)
+// data class Behaviour(val type: BehaviourType, val direction: Direction?, val time: Long = 0L, var characterId: String? = null, val retry: Boolean = false)
+
+data class Wall(var x: Float, var y: Float, val width: Float = GRIDSIZE, val height: Float = GRIDSIZE)
 
 open class GameObjectConfig(val id: String, var x: Int = 0, var y: Int = 0, val spritesheet: String, val behaviourLoop: MutableList<Behaviour> = mutableListOf())
 class CharacterConfig(
@@ -85,4 +88,90 @@ object EventHandler {
 
 interface EventListener {
     fun update(objectId: String)
+}
+
+open class Behaviour {
+    var isFinished: Boolean = false
+    open fun update(delta: Float) {}
+}
+
+class WalkBehaviour(val target: Character, val direction: Direction, val distance: Float, val speed: Float): Behaviour() {
+    private var timePassed: Float = 0.0f
+    private var percent: Float = 0.0f
+    private var startX: Float = 0.0f
+    private  var startY: Float = 0.0f
+    private var endX: Float = 0.0f
+    private  var endY: Float = 0.0f
+
+    fun begin() {
+        startX = target.x
+        startY = target.y
+        endX = if (direction == Direction.LEFT) startX - distance else startX + distance
+        endY = if (direction == Direction.DOWN) startY - distance else startY + distance
+    }
+
+    override fun update(delta: Float) {
+        if (!isFinished) {
+
+            when (direction) {
+                Direction.UP -> {
+                    target.y += 1 * speed
+                    if (target.y >= endY) {
+                        target.y = endY
+                        isFinished = true
+                    }
+                }
+                Direction.DOWN -> {
+                    target.y += -1 * speed
+                    if (target.y <= endY) {
+                        target.y = endY
+                        isFinished = true
+                    }
+                }
+                Direction.LEFT -> {
+                    target.x += -1 * speed
+                    if (target.x <= endX) {
+                        target.x = endX
+                        isFinished = true
+                    }
+                }
+                Direction.RIGHT -> {
+                    target.x += 1 * speed
+                    if (target.x >= endX) {
+                        target.x = endX
+                        isFinished = true
+                    }
+                }
+            }
+
+            /*timePassed += delta
+            isFinished = timePassed >= duration
+            percent = if (isFinished) 1.0f else timePassed / duration
+            val x: Float
+            val y: Float
+            if (percent == 0f) {
+                x = startX
+                y = startY
+            } else if (percent == 1f) {
+                x = endX
+                y = endY
+            } else {
+                x = startX + (endX - startX) * percent
+                y = startY + (endY - startY) * percent
+            }
+            target.x = x
+            target.y = y*/
+        }
+    }
+}
+
+class IdleBehaviour(val duration: Float): Behaviour() {
+    private var timePassed: Float = 0.0f
+
+    override fun update(delta: Float) {
+        if (!isFinished) {
+            timePassed += delta
+            isFinished = timePassed >= duration
+        }
+    }
 }

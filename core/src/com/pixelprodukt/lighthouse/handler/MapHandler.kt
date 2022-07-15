@@ -4,17 +4,16 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
+import com.pixelprodukt.lighthouse.Wall
 import com.pixelprodukt.lighthouse.enums.ItemType
 import com.pixelprodukt.lighthouse.data.MapChestObjectItemData
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
-import com.pixelprodukt.lighthouse.gameobjects.Wall
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.map.WarpExit
 import com.pixelprodukt.lighthouse.map.WarpFactory
 import com.pixelprodukt.lighthouse.map.WarpEntry
-import com.pixelprodukt.lighthouse.system.Body
 import com.pixelprodukt.lighthouse.system.GameManager
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -117,6 +116,8 @@ class MapHandler(private val game: GameManager) {
             val wall = Wall(rect.x, rect.y)
             walls.add(wall)
         }
+        walls.add(player.wall)
+        walls.add(game.testNpc.wall)
         return walls
     }
 

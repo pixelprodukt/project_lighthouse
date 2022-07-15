@@ -8,16 +8,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.scenes.scene2d.InputListener
-import com.pixelprodukt.lighthouse.Behaviour
-import com.pixelprodukt.lighthouse.BehaviourType
-import com.pixelprodukt.lighthouse.UpdateState
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.FillViewport
 import com.pixelprodukt.lighthouse.enums.WorldMapState
-import com.pixelprodukt.lighthouse.gameobjects.*
+import com.pixelprodukt.lighthouse.gameobjects.Chest
+import com.pixelprodukt.lighthouse.gameobjects.GameObject
+import com.pixelprodukt.lighthouse.gameobjects.Sign
+import com.pixelprodukt.lighthouse.gameobjects.SimpleNpcCharacter
 import com.pixelprodukt.lighthouse.gameobjects.itemdata.Item
 import com.pixelprodukt.lighthouse.handler.MessageHandler
 import com.pixelprodukt.lighthouse.interfaces.Interactable
 import com.pixelprodukt.lighthouse.map.GameMap
-import com.pixelprodukt.lighthouse.system.*
+import com.pixelprodukt.lighthouse.system.Body
+import com.pixelprodukt.lighthouse.system.Console
+import com.pixelprodukt.lighthouse.system.GameManager
+import com.pixelprodukt.lighthouse.system.resolveCollision
 import com.pixelprodukt.lighthouse.ui.SimpleTextBox
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
@@ -39,38 +44,21 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
     private val simpleTextBox = SimpleTextBox(248f, 45f)
     private val inputListener = InputListener()
 
+    private val stage = Stage(
+        FillViewport(1024f / 4f, 768f / 4f, camera),
+        batch
+    )
+
     init {
         batch.projectionMatrix = camera.combined
         mapRenderer.map = currentMap.tiledMap
         mapRenderer.setView(camera)
-        initInteractableListeners(currentMap)
-        simpleTextBox.onClose { state = WorldMapState.RUNNING }
-        // game.testNpc.setBoundaries(currentMap.tiledMap) // TODO: Boundaries have to be set when the npc is put into the GameMap object
-        currentMap.mountObjects()
-
-        currentMap.startCutscene(listOf(
-            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
-            Behaviour(BehaviourType.WALK, Direction.RIGHT, characterId = "PLAYER"),
-            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
-            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "PLAYER"),
-            Behaviour(BehaviourType.WALK, Direction.LEFT, characterId = "NADJA"),
-            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
-            Behaviour(BehaviourType.WALK, Direction.DOWN, characterId = "NADJA"),
-        ))
     }
 
     override fun render(delta: Float) {
         clearScreen(8f / 255f, 24f / 255f, 32f / 255f, 1f)
 
-        currentMap.interactables.forEach { interactable ->
-            /*if (interactable.sensor.isActive && intersect(player.body, interactable.sensor)) {
-                interactablesInRange.add(interactable)
-            }*/
-        }
-
         handleInput()
-        // processCollisions(currentMap.walls)
-        // processWarpCollisions(player, currentMap)
 
         camera.update()
         camera.position.set(player.x, player.y, 0f)
@@ -81,7 +69,9 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
 
         batch.use { batch ->
             currentMap.gameObjects.forEach { gameObject ->
-                if (state == WorldMapState.RUNNING) gameObject.update(UpdateState(game.inputHandler.pressedKey, currentMap))
+                /*if (state == WorldMapState.RUNNING) gameObject.update(UpdateState(game.inputHandler.pressedKey, currentMap))
+                gameObject.render(batch)*/
+                gameObject.update(delta, game.inputHandler.pressedKey, currentMap)
                 gameObject.render(batch)
             }
         }
@@ -98,7 +88,8 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         if (game.inputHandler.isDebug) debugRendering()
 
         currentMap.gameObjects.sort()
-        interactablesInRange.clear()
+
+        //if (player.actions.size == 0) player.isMoving = false
     }
 
     override fun show() {
@@ -123,6 +114,12 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
                 MessageHandler.publishMessages(mutableListOf("Hello World from WorldMapView!", "This is a message for you all!"))
             }
+
+            /*if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                if (player.actions.size == 0) {
+                    player.addAction(Actions.moveTo(player.x + 16.0f, player.y, 0.2f))
+                }
+            }*/
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 if (interactablesInRange.isNotEmpty()) interactablesInRange.last().interact()

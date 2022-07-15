@@ -1,25 +1,23 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.pixelprodukt.lighthouse.*
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.AnimationController
 import com.pixelprodukt.lighthouse.system.Direction
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.timerTask
 
 open class Character(config: CharacterConfig, private val animationController: AnimationController) : GameObject(config) {
 
-    private var movingProgressRemaining = 0.0f
-
-    var speed = 1.0f
+    var actionDuration = 0.3f
     val isPlayerControlled = config.isPlayerControlled
+    var currentBehaviour: Behaviour? = null
+    /*val behaviourLoop
+    val behaviourLoopIndex
+    val currentBehaviour*/
 
     private fun changeAnimationControllerState() {
-        if (movingProgressRemaining > 0) {
+        if (false) {
             animationController.state = when (direction) {
                 Direction.UP -> AnimationController.MOVE_UP
                 Direction.DOWN -> AnimationController.MOVE_DOWN
@@ -48,49 +46,40 @@ open class Character(config: CharacterConfig, private val animationController: A
 
     private fun updatePosition() {
         when (direction) {
-            Direction.UP -> y += 1 * speed
-            Direction.DOWN -> y += -1 * speed
-            Direction.LEFT -> x += -1 * speed
-            Direction.RIGHT -> x += 1 * speed
-        }
-        movingProgressRemaining -= 1 * speed
-
-        if (movingProgressRemaining == 0.0f) {
-            EventHandler.dispatchEvent("personWalkingComplete", id)
+            Direction.UP -> y += 1 * actionDuration
+            Direction.DOWN -> y += -1 * actionDuration
+            Direction.LEFT -> x += -1 * actionDuration
+            Direction.RIGHT -> x += 1 * actionDuration
         }
     }
 
-    fun startBehaviour(state: UpdateState, behaviour: Behaviour) {
-        direction = behaviour.direction
-        if (behaviour.type == BehaviourType.WALK) {
-            if (state.map.isSpaceTaken(x, y, direction!!)) {
-                if (behaviour.retry) {
-                    Timer().schedule(timerTask { startBehaviour(state, behaviour) }, 1000L)
-                }
+    fun startAction(map: GameMap, direction: Direction, behaviourType: BehaviourType) {
+        this.direction = direction
+        if (behaviourType == BehaviourType.WALK) {
+            if (map.isSpaceTaken(x, y, direction)) {
                 return
             }
-            state.map.moveWall(this.x, this.y, direction!!)
-            this.movingProgressRemaining = 16.0f
-            changeAnimationControllerState()
-        }
-
-        if (behaviour.type == BehaviourType.IDLE) {
-            Timer().schedule(timerTask { EventHandler.dispatchEvent("personIdleComplete", id) }, behaviour.time)
+            val walkBehaviour = WalkBehaviour(this, direction, GRIDSIZE, 0.5f)
+            walkBehaviour.begin()
+            currentBehaviour = walkBehaviour
+            val nextPos = nextPosition(x, y, direction)
+            wall.x = nextPos.x
+            wall.y = nextPos.y
         }
     }
 
-    override fun update(state: UpdateState) {
-        if (isActive) {
-            super.update(state)
-            if (movingProgressRemaining > 0.0f) {
-                updatePosition();
-            } else {
-                if (isPlayerControlled && state.direction != null) {
-                    startBehaviour(state, Behaviour(BehaviourType.WALK, state.direction))
-                }
-                changeAnimationControllerState()
-            }
-            updateAnimationControllerAndRegion()
+    override fun update(delta: Float, pressedKey: Direction?, map: GameMap) {
+        if (currentBehaviour?.isFinished == true) {
+            currentBehaviour = null
         }
+        if (isPlayerControlled && pressedKey != null && currentBehaviour == null) {
+            startAction(map, pressedKey, BehaviourType.WALK)
+            println("here")
+        }
+
+        currentBehaviour?.update(delta)
+
+        changeAnimationControllerState()
+        updateAnimationControllerAndRegion()
     }
 }
