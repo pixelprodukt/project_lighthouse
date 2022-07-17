@@ -2,14 +2,13 @@ package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.pixelprodukt.lighthouse.GRIDSIZE
-import com.pixelprodukt.lighthouse.GameObjectConfig
-import com.pixelprodukt.lighthouse.Wall
+import com.pixelprodukt.lighthouse.*
+import com.pixelprodukt.lighthouse.interfaces.Renderable
+import com.pixelprodukt.lighthouse.interfaces.Updatable
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.Direction
-import com.pixelprodukt.lighthouse.toGrid
 
-open class GameObject(val config: GameObjectConfig) : Comparable<GameObject> {
+open class GameObject(val config: GameObjectConfig) : Updatable, Renderable, Comparable<GameObject> {
 
     protected var region: TextureRegion? = null
 
@@ -23,14 +22,13 @@ open class GameObject(val config: GameObjectConfig) : Comparable<GameObject> {
     val id: String = config.id
     var direction: Direction? = Direction.DOWN
 
-    open fun update(delta: Float, direction: Direction?, map: GameMap) {
-    }
-
-    fun render(batch: SpriteBatch) {
+    override fun render(batch: SpriteBatch) {
         val originX: Float = width.div(2)
         val originY: Float = height.div(2)
         batch.draw(region, x, y, originX, originY, width, height, 1.0f, 1.0f, 0.0f)
     }
+
+    override fun update(delta: Float, state: UpdateState) {}
 
     override fun compareTo(other: GameObject): Int {
         val tempY = other.y

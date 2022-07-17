@@ -20,6 +20,6 @@ open abstract class NpcCharacter(
     private var boundsHeight: Float? = null
 
     init {
-        actionDuration = 0.5f
+        speed = 0.5f
     }
 }

@@ -1,23 +1,25 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.pixelprodukt.lighthouse.*
 import com.pixelprodukt.lighthouse.map.GameMap
 import com.pixelprodukt.lighthouse.system.AnimationController
 import com.pixelprodukt.lighthouse.system.Direction
 
-open class Character(config: CharacterConfig, private val animationController: AnimationController) : GameObject(config) {
+open class Character(
+    config: CharacterConfig,
+    private val animationController: AnimationController,
+    private val behaviourLoop: List<BehaviourConfig> = config.behaviourLoop
+    ) : GameObject(config) {
 
-    var actionDuration = 0.3f
+    var speed = 0.8f
     val isPlayerControlled = config.isPlayerControlled
-    var currentBehaviour: Behaviour? = null
-    /*val behaviourLoop
-    val behaviourLoopIndex
-    val currentBehaviour*/
+    private var isMoving = false
+    private var currentBehaviour: Behaviour? = null
+    var behaviourLoopIndex = 0
 
     private fun changeAnimationControllerState() {
-        if (false) {
+        if (isMoving) {
             animationController.state = when (direction) {
                 Direction.UP -> AnimationController.MOVE_UP
                 Direction.DOWN -> AnimationController.MOVE_DOWN
@@ -44,37 +46,38 @@ open class Character(config: CharacterConfig, private val animationController: A
         )!!
     }
 
-    private fun updatePosition() {
-        when (direction) {
-            Direction.UP -> y += 1 * actionDuration
-            Direction.DOWN -> y += -1 * actionDuration
-            Direction.LEFT -> x += -1 * actionDuration
-            Direction.RIGHT -> x += 1 * actionDuration
-        }
-    }
-
-    fun startAction(map: GameMap, direction: Direction, behaviourType: BehaviourType) {
+    private fun startAction(map: GameMap, direction: Direction, behaviourType: BehaviourType) {
         this.direction = direction
         if (behaviourType == BehaviourType.WALK) {
             if (map.isSpaceTaken(x, y, direction)) {
                 return
             }
-            val walkBehaviour = WalkBehaviour(this, direction, GRIDSIZE, 0.5f)
+            val walkBehaviour = WalkBehaviour(this, direction, GRIDSIZE, speed)
             walkBehaviour.begin()
             currentBehaviour = walkBehaviour
+            isMoving = true
             val nextPos = nextPosition(x, y, direction)
             wall.x = nextPos.x
             wall.y = nextPos.y
         }
     }
 
-    override fun update(delta: Float, pressedKey: Direction?, map: GameMap) {
+    override fun update(delta: Float, state: UpdateState) {
+
         if (currentBehaviour?.isFinished == true) {
             currentBehaviour = null
+            isMoving = false
         }
-        if (isPlayerControlled && pressedKey != null && currentBehaviour == null) {
-            startAction(map, pressedKey, BehaviourType.WALK)
-            println("here")
+
+        if (currentBehaviour == null) {
+            if (isPlayerControlled && state.direction != null) {
+                startAction(state.map, state.direction, state.behaviourType)
+            } else if (behaviourLoop.isNotEmpty()) {
+                if (behaviourLoopIndex > behaviourLoop.size - 1) {
+                    behaviourLoopIndex = 0
+                }
+                startAction(state.map, behaviourLoop[behaviourLoopIndex].direction, behaviourLoop[behaviourLoopIndex].type)
+            }
         }
 
         currentBehaviour?.update(delta)

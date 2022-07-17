@@ -10,6 +10,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FillViewport
+import com.pixelprodukt.lighthouse.BehaviourType
+import com.pixelprodukt.lighthouse.UpdateState
 import com.pixelprodukt.lighthouse.enums.WorldMapState
 import com.pixelprodukt.lighthouse.gameobjects.Chest
 import com.pixelprodukt.lighthouse.gameobjects.GameObject
@@ -69,10 +71,10 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
 
         batch.use { batch ->
             currentMap.gameObjects.forEach { gameObject ->
-                /*if (state == WorldMapState.RUNNING) gameObject.update(UpdateState(game.inputHandler.pressedKey, currentMap))
-                gameObject.render(batch)*/
-                gameObject.update(delta, game.inputHandler.pressedKey, currentMap)
-                gameObject.render(batch)
+                if (state == WorldMapState.RUNNING) {
+                    gameObject.update(delta, UpdateState(currentMap, game.inputHandler.pressedKey, BehaviourType.WALK))
+                    gameObject.render(batch)
+                }
             }
         }
 
@@ -88,8 +90,6 @@ class WorldMapScreen(private val game: GameManager) : KtxScreen {
         if (game.inputHandler.isDebug) debugRendering()
 
         currentMap.gameObjects.sort()
-
-        //if (player.actions.size == 0) player.isMoving = false
     }
 
     override fun show() {

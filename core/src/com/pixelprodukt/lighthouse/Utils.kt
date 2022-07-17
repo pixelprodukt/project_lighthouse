@@ -35,23 +35,23 @@ fun getCharacterConfig(filename: String): CharacterConfig {
 }
 
 enum class BehaviourType {
+    NONE,
     IDLE,
     WALK
 }
 
-data class UpdateState(val direction: Direction?, val map: GameMap)
-// data class Behaviour(val type: BehaviourType, val direction: Direction?, val time: Long = 0L, var characterId: String? = null, val retry: Boolean = false)
+data class UpdateState(val map: GameMap, val direction: Direction?, val behaviourType: BehaviourType)
 
 data class Wall(var x: Float, var y: Float, val width: Float = GRIDSIZE, val height: Float = GRIDSIZE)
 
-open class GameObjectConfig(val id: String, var x: Int = 0, var y: Int = 0, val spritesheet: String, val behaviourLoop: MutableList<Behaviour> = mutableListOf())
+open class GameObjectConfig(val id: String, var x: Int = 0, var y: Int = 0, val spritesheet: String, val behaviourLoop: MutableList<BehaviourConfig> = mutableListOf())
 class CharacterConfig(
     id: String,
     x: Int = 0,
     y: Int = 0,
     spritesheet: String,
     val isPlayerControlled: Boolean = false,
-    behaviourLoop: MutableList<Behaviour> = mutableListOf()
+    behaviourLoop: MutableList<BehaviourConfig> = mutableListOf()
     ): GameObjectConfig(id, x, y, spritesheet, behaviourLoop)
 
 object EventHandler {
@@ -90,14 +90,19 @@ interface EventListener {
     fun update(objectId: String)
 }
 
+data class BehaviourConfig(val type: BehaviourType, val direction: Direction, val duration: Float? = 0.0f)
+
 open class Behaviour {
     var isFinished: Boolean = false
     open fun update(delta: Float) {}
 }
 
-class WalkBehaviour(val target: Character, val direction: Direction, val distance: Float, val speed: Float): Behaviour() {
-    private var timePassed: Float = 0.0f
-    private var percent: Float = 0.0f
+class WalkBehaviour(
+    private val target: Character,
+    private val direction: Direction,
+    private val distance: Float,
+    private val speed: Float
+    ): Behaviour() {
     private var startX: Float = 0.0f
     private  var startY: Float = 0.0f
     private var endX: Float = 0.0f
@@ -143,24 +148,9 @@ class WalkBehaviour(val target: Character, val direction: Direction, val distanc
                     }
                 }
             }
-
-            /*timePassed += delta
-            isFinished = timePassed >= duration
-            percent = if (isFinished) 1.0f else timePassed / duration
-            val x: Float
-            val y: Float
-            if (percent == 0f) {
-                x = startX
-                y = startY
-            } else if (percent == 1f) {
-                x = endX
-                y = endY
-            } else {
-                x = startX + (endX - startX) * percent
-                y = startY + (endY - startY) * percent
-            }
-            target.x = x
-            target.y = y*/
+        }
+        if (isFinished && !target.isPlayerControlled) {
+            target.behaviourLoopIndex++
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.pixelprodukt.lighthouse.gameobjects
 
 import com.pixelprodukt.lighthouse.CharacterConfig
-import com.pixelprodukt.lighthouse.GameObjectConfig
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Attributes
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Inventory
 import com.pixelprodukt.lighthouse.gameobjects.characterdata.Statistics
