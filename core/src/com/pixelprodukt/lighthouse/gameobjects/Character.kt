@@ -46,19 +46,27 @@ open class Character(
         )!!
     }
 
-    private fun startAction(map: GameMap, direction: Direction, behaviourType: BehaviourType) {
-        this.direction = direction
-        if (behaviourType == BehaviourType.WALK) {
-            if (map.isSpaceTaken(x, y, direction)) {
+    private fun startAction(map: GameMap, behaviourConfig: BehaviourConfig) {
+
+        this.direction = behaviourConfig.direction
+
+        if (behaviourConfig.type == BehaviourType.WALK) {
+            if (map.isSpaceTaken(x, y, behaviourConfig.direction)) {
                 return
             }
-            val walkBehaviour = WalkBehaviour(this, direction, GRIDSIZE, speed)
+            val walkBehaviour = WalkBehaviour(this, behaviourConfig.direction, GRIDSIZE, speed)
             walkBehaviour.begin()
             currentBehaviour = walkBehaviour
             isMoving = true
-            val nextPos = nextPosition(x, y, direction)
+            val nextPos = nextPosition(x, y, behaviourConfig.direction)
             wall.x = nextPos.x
             wall.y = nextPos.y
+        }
+
+        if (behaviourConfig.type == BehaviourType.IDLE) {
+            val idleBehaviour = IdleBehaviour(this, behaviourConfig.duration!!)
+            currentBehaviour = idleBehaviour
+            isMoving = false
         }
     }
 
@@ -71,12 +79,12 @@ open class Character(
 
         if (currentBehaviour == null) {
             if (isPlayerControlled && state.direction != null) {
-                startAction(state.map, state.direction, state.behaviourType)
+                startAction(state.map, BehaviourConfig(state.behaviourType, state.direction))
             } else if (behaviourLoop.isNotEmpty()) {
                 if (behaviourLoopIndex > behaviourLoop.size - 1) {
                     behaviourLoopIndex = 0
                 }
-                startAction(state.map, behaviourLoop[behaviourLoopIndex].direction, behaviourLoop[behaviourLoopIndex].type)
+                startAction(state.map, behaviourLoop[behaviourLoopIndex])
             }
         }
 

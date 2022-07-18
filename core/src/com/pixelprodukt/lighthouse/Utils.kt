@@ -92,17 +92,17 @@ interface EventListener {
 
 data class BehaviourConfig(val type: BehaviourType, val direction: Direction, val duration: Float? = 0.0f)
 
-open class Behaviour {
+open class Behaviour(val target: Character) {
     var isFinished: Boolean = false
     open fun update(delta: Float) {}
 }
 
 class WalkBehaviour(
-    private val target: Character,
+    target: Character,
     private val direction: Direction,
     private val distance: Float,
     private val speed: Float
-    ): Behaviour() {
+    ): Behaviour(target) {
     private var startX: Float = 0.0f
     private  var startY: Float = 0.0f
     private var endX: Float = 0.0f
@@ -155,13 +155,16 @@ class WalkBehaviour(
     }
 }
 
-class IdleBehaviour(val duration: Float): Behaviour() {
+class IdleBehaviour(target: Character, private val duration: Float): Behaviour(target) {
     private var timePassed: Float = 0.0f
 
     override fun update(delta: Float) {
         if (!isFinished) {
             timePassed += delta
             isFinished = timePassed >= duration
+        }
+        if (isFinished && !target.isPlayerControlled) {
+            target.behaviourLoopIndex++
         }
     }
 }

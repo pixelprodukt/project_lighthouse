@@ -11,6 +11,9 @@
         { "type": "WALK", "direction": "RIGHT" },
         { "type": "WALK", "direction": "RIGHT" },
         { "type": "WALK", "direction": "RIGHT" },
-        { "type": "WALK", "direction": "DOWN" }
+        { "type": "WALK", "direction": "DOWN" },
+        { "type": "IDLE", "direction": "LEFT", "duration": 1.0 },
+        { "type": "IDLE", "direction": "RIGHT", "duration": 1.0 },
+        { "type": "IDLE", "direction": "UP", "duration": 1.0 }
     ]
 }
